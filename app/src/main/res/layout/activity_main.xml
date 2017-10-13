@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/body"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/colorBackground"
+    android:orientation="horizontal"
+    tools:context="net.tuurlievens.dotpict.MainActivity"
+    tools:layout_editor_absoluteX="0"
+    tools:layout_editor_absoluteY="0">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/colorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        app:srcCompat="@drawable/ic_color_lens_white_32dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fillButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="75dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_format_color_fill_white_24dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/clearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="120dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_clear_white_24dp" />
+
+    <net.tuurlievens.dotpict.TouchableLinearView
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="@android:color/white"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="0"
+        tools:layout_editor_absoluteY="0">
+
+    </net.tuurlievens.dotpict.TouchableLinearView>
+
+</RelativeLayout>
