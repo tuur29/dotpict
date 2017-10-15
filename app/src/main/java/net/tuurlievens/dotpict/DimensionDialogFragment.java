@@ -44,7 +44,8 @@ public class DimensionDialogFragment extends DialogFragment {
             AlertDialog d = (AlertDialog) dialog;
             SeekBar rows = d.findViewById(R.id.seekBarRows);
             SeekBar columns = d.findViewById(R.id.seekBarColumns);
-            dListener.onDialogPositiveClick(rows.getProgress(), columns.getProgress());
+            dialog.dismiss();
+            dListener.onDialogPositiveClick(rows.getProgress() + 3, columns.getProgress() + 3 );
             }
         });
 

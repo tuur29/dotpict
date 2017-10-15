@@ -5,4 +5,6 @@
     <string name="row">Rows</string>
     <string name="column">Columns</string>
     <string name="generate">Generate</string>
+    <string name="toolsmessage">Holding the floating button shows more options</string>
+    <string name="colorpickermessage">The next pixel you touch will change the selected color</string>
 </resources>
