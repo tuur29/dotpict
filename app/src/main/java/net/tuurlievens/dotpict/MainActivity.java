@@ -1,6 +1,5 @@
 package net.tuurlievens.dotpict;
 
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,14 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements DimensionDialogFragment.DimensionDialogListener, ColorPickerDialogListener {
 
@@ -37,8 +35,9 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
     private boolean pickingColor = false;
 
     private ViewGroup canvas;
-    private ArrayList<Button> buttons = new ArrayList<>();
-    private int buttonCentreOffset = 0;
+    private TextView[][] views = null;
+
+    private int viewCentreOffset = 0;
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -103,9 +102,9 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         fillButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (Button button : buttons) {
-                    button.setBackgroundColor(color);
-                }
+                for (TextView[] row : views)
+                    for (TextView button: row)
+                        button.setBackgroundColor(color);
                 hideExtraTools();
             }
         });
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         clearButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                buttons.clear();
+                views = null;
                 body.removeView(canvas);
                 hideExtraTools();
                 openDialog();
@@ -150,27 +149,30 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         new Thread(new Runnable() {
             public void run() {
                 // setup canvas buttons
-                for (int i = 0; i < columns; i++) {
+
+                views = new TextView[rows][columns];
+
+                for (int i = 0; i < rows; i++) {
                     // make rows
                     LinearLayout row = new LinearLayout(MainActivity.this);
                     row.setOrientation(LinearLayout.VERTICAL);
 
-                    for (int j = 0; j < rows; j++) {
+                    for (int j = 0; j < columns; j++) {
                         // calculate best button size
                         int calculatedHeight = body.getMeasuredHeight() / rows;
                         int calculatedWidth = body.getMeasuredWidth() / columns;
                         int calculatedSize = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
-                        buttonCentreOffset = calculatedSize;
+                        viewCentreOffset = calculatedSize;
 
                         // make button
-                        Button button = new Button(MainActivity.this);
-                        button.setHeight(calculatedSize);
-                        button.setWidth(calculatedSize);
-                        button.setMinimumHeight(5);
-                        button.setMinimumWidth(5);
-                        button.setBackgroundColor(Color.WHITE);
-                        buttons.add(button);
-                        row.addView(button);
+                        TextView view = new TextView(MainActivity.this);
+                        view.setHeight(calculatedSize);
+                        view.setWidth(calculatedSize);
+                        view.setMinimumHeight(5);
+                        view.setMinimumWidth(5);
+                        view.setBackgroundColor(Color.WHITE);
+                        views[i][j] = view;
+                        row.addView(view);
                     }
 
                     canvas.addView(row);
@@ -202,25 +204,31 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         // touch 'canvas'
         canvas.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public boolean onTouch(View v, MotionEvent motionEvent) {
                 int x = (int) motionEvent.getRawX();
                 int y = (int) motionEvent.getRawY();
 
                 // find button under current coordinates
-                for (Button button : buttons) {
-                    int params[] = new int[2];
-                    button.getLocationOnScreen(params);
+                rowloop: for (TextView[] row : views) {
+                    for (TextView view : row) {
 
-                    if ( x >= params[0] - buttonCentreOffset && x <= params[0] + buttonCentreOffset ) {
-                        if ( y >= params[1] - buttonCentreOffset && y <= params[1] + buttonCentreOffset ) {
-                            if (pickingColor) {
-                                setColor(((ColorDrawable) button.getBackground()).getColor());
-                                pickingColor = false;
-                            } else {
-                                button.setBackgroundColor(color);
+                        int params[] = new int[2];
+                        view.getLocationOnScreen(params);
+
+                        if ( x >= params[0] - viewCentreOffset && x <= params[0] + viewCentreOffset ) {
+                            if ( y >= params[1] - viewCentreOffset && y <= params[1] + viewCentreOffset ) {
+                                if (pickingColor) {
+                                    setColor(((ColorDrawable) view.getBackground()).getColor());
+                                    pickingColor = false;
+                                } else {
+                                    view.setBackgroundColor(color);
+                                }
+                                break rowloop;
                             }
-                            break;
+                        } else {
+                            continue rowloop;
                         }
+
                     }
                 }
 
