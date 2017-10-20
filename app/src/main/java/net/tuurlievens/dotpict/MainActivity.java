@@ -64,8 +64,7 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
 
         openDialog();
 
-        // open color picker
-        // Source: https://github.com/jaredrummler/ColorPicker
+        // open color picker, source: https://github.com/jaredrummler/ColorPicker
         colorButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,11 +77,10 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         colorButton.setOnLongClickListener(new FloatingActionButton.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (fillButton.getVisibility() == View.VISIBLE) {
+                if (fillButton.getVisibility() == View.VISIBLE)
                     hideExtraTools();
-                } else {
+                else
                     showExtraTools();
-                }
                 return true;
             }
         });
@@ -109,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         clearButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                canvas.reset();
                 body.removeView(canvas);
                 hideExtraTools();
                 openDialog();
@@ -168,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                         canvas.pixels[i][j] = pixel;
                         row.addView(pixel);
                     }
-
                     canvas.addView(row);
                 }
                 addCanvas(canvas);
