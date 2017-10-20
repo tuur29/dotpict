@@ -12,17 +12,6 @@
     tools:layout_editor_absoluteX="0"
     tools:layout_editor_absoluteY="0">
 
-    <net.tuurlievens.dotpict.TouchableLinearView
-        android:id="@+id/parent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:backgroundTint="@android:color/white"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="0"
-        tools:layout_editor_absoluteY="0">
-
-    </net.tuurlievens.dotpict.TouchableLinearView>
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/colorButton"
         android:layout_width="wrap_content"
