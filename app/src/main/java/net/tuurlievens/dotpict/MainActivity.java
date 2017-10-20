@@ -149,8 +149,13 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
 
         new Thread(new Runnable() {
             public void run() {
-                // setup canvas buttons
+                // calculate best button size
+                int calculatedHeight = (int) (body.getMeasuredHeight() * 0.9 / rows);
+                int calculatedWidth = (int) (body.getMeasuredWidth() * 0.9 / columns);
+                int calculatedSize = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
+                viewCentreOffset = calculatedSize;
 
+                // setup canvas buttons
                 views = new TextView[rows][columns];
 
                 for (int i = 0; i < rows; i++) {
@@ -159,12 +164,6 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                     row.setOrientation(LinearLayout.VERTICAL);
 
                     for (int j = 0; j < columns; j++) {
-                        // calculate best button size
-                        int calculatedHeight = (int) (body.getMeasuredHeight() * 0.9 / rows);
-                        int calculatedWidth = (int) (body.getMeasuredWidth() * 0.9 / columns);
-                        int calculatedSize = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
-                        viewCentreOffset = calculatedSize;
-
                         // make button
                         TextView view = new TextView(MainActivity.this);
                         view.setHeight(calculatedSize);
