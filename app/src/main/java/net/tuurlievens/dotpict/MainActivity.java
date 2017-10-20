@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -159,8 +160,8 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
 
                     for (int j = 0; j < columns; j++) {
                         // calculate best button size
-                        int calculatedHeight = body.getMeasuredHeight() / rows;
-                        int calculatedWidth = body.getMeasuredWidth() / columns;
+                        int calculatedHeight = (int) (body.getMeasuredHeight() * 0.9 / rows);
+                        int calculatedWidth = (int) (body.getMeasuredWidth() * 0.9 / columns);
                         int calculatedSize = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
                         viewCentreOffset = calculatedSize;
 
@@ -168,8 +169,6 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                         TextView view = new TextView(MainActivity.this);
                         view.setHeight(calculatedSize);
                         view.setWidth(calculatedSize);
-                        view.setMinimumHeight(5);
-                        view.setMinimumWidth(5);
                         view.setBackgroundColor(Color.WHITE);
                         views[i][j] = view;
                         row.addView(view);
@@ -193,6 +192,13 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                 progressBar.setVisibility(View.INVISIBLE);
                 body.addView(canvas, 0);
                 body.invalidate();
+
+                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) canvas.getLayoutParams();
+                layoutParams.height = RelativeLayout.LayoutParams.WRAP_CONTENT;
+                layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
+                layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+                canvas.setLayoutParams(layoutParams);
+
                 registerCanvas(canvas);
             }
         });
