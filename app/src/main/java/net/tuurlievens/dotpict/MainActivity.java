@@ -35,10 +35,7 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
     private boolean dialogOpen = false;
     private boolean pickingColor = false;
 
-    private ViewGroup canvas;
-    private TextView[][] views = null;
-
-    private int viewCentreOffset = 0;
+    private CanvasView canvas;
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -103,9 +100,7 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         fillButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (TextView[] row : views)
-                    for (TextView button: row)
-                        button.setBackgroundColor(color);
+                canvas.fill(color);
                 hideExtraTools();
             }
         });
@@ -114,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         clearButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                views = null;
+                canvas.reset();
                 body.removeView(canvas);
                 hideExtraTools();
                 openDialog();
@@ -143,20 +138,21 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         progressBar.setVisibility(View.VISIBLE);
 
         // make canvas
-        final TouchableLinearView canvas = new TouchableLinearView(MainActivity.this);
+        final CanvasView canvas = new CanvasView(MainActivity.this);
         canvas.setBackgroundColor(Color.WHITE);
         canvas.setElevation(8);
 
+        // TODO: move to init function? how to add child views in itself? callback on init function?
         new Thread(new Runnable() {
             public void run() {
                 // calculate best button size
                 int calculatedHeight = (int) (body.getMeasuredHeight() * 0.9 / rows);
                 int calculatedWidth = (int) (body.getMeasuredWidth() * 0.9 / columns);
                 int calculatedSize = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
-                viewCentreOffset = calculatedSize;
+                canvas.pixelRadius = calculatedSize;
 
                 // setup canvas buttons
-                views = new TextView[rows][columns];
+                canvas.pixels = new TextView[rows][columns];
 
                 for (int i = 0; i < rows; i++) {
                     // make rows
@@ -165,12 +161,12 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
 
                     for (int j = 0; j < columns; j++) {
                         // make button
-                        TextView view = new TextView(MainActivity.this);
-                        view.setHeight(calculatedSize);
-                        view.setWidth(calculatedSize);
-                        view.setBackgroundColor(Color.WHITE);
-                        views[i][j] = view;
-                        row.addView(view);
+                        TextView pixel = new TextView(MainActivity.this);
+                        pixel.setHeight(calculatedSize);
+                        pixel.setWidth(calculatedSize);
+                        pixel.setBackgroundColor(Color.WHITE);
+                        canvas.pixels[i][j] = pixel;
+                        row.addView(pixel);
                     }
 
                     canvas.addView(row);
@@ -183,8 +179,7 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         Toast.makeText(getApplicationContext(), R.string.toolsmessage, Toast.LENGTH_SHORT).show();
     }
 
-    private void addCanvas(final ViewGroup canvas) {
-
+    private void addCanvas(final CanvasView canvas) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -201,11 +196,9 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                 registerCanvas(canvas);
             }
         });
-
     }
 
-    private void registerCanvas(ViewGroup canvas) {
-
+    private void registerCanvas(final CanvasView canvas) {
         // touch 'canvas'
         canvas.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -214,29 +207,26 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                 int y = (int) motionEvent.getRawY();
 
                 // find button under current coordinates
-                rowloop: for (TextView[] row : views) {
-                    for (TextView view : row) {
-
+                rowloop: for (TextView[] row : canvas.pixels) {
+                    for (TextView pixel : row) {
                         int params[] = new int[2];
-                        view.getLocationOnScreen(params);
+                        pixel.getLocationOnScreen(params);
 
-                        if ( x >= params[0] - viewCentreOffset && x <= params[0] + viewCentreOffset ) {
-                            if ( y >= params[1] - viewCentreOffset && y <= params[1] + viewCentreOffset ) {
+                        if ( x >= params[0] - canvas.pixelRadius && x <= params[0] + canvas.pixelRadius) {
+                            if ( y >= params[1] - canvas.pixelRadius && y <= params[1] + canvas.pixelRadius) {
                                 if (pickingColor) {
-                                    setColor(((ColorDrawable) view.getBackground()).getColor());
+                                    setColor(((ColorDrawable) pixel.getBackground()).getColor());
                                     pickingColor = false;
                                 } else {
-                                    view.setBackgroundColor(color);
+                                    pixel.setBackgroundColor(color);
                                 }
                                 break rowloop;
                             }
                         } else {
                             continue rowloop;
                         }
-
                     }
                 }
-
                 return true;
             }
         });
