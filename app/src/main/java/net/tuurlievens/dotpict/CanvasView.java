@@ -26,8 +26,17 @@ public class CanvasView extends LinearLayout {
                 button.setBackgroundColor(color);
     }
 
-    public void reset() {
-        pixels = null;
+    public int[] toArray() {
+        int[] list = new int[pixels.length*pixels[0].length];
+        int i = 0;
+        for (TextView[] row : pixels) {
+            for (TextView pixel : row) {
+                list[i] = ((ColorDrawable) pixel.getBackground()).getColor();
+                i++;
+            }
+        }
+
+        return list;
     }
 
     @Override
