@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,31 +137,31 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
 
         // make canvas
         final CanvasView canvas = new CanvasView(MainActivity.this);
+        canvas.setOrientation(LinearLayout.VERTICAL);
         canvas.setBackgroundColor(Color.WHITE);
         canvas.setElevation(8);
 
         // TODO: move to init function? how to add child views in itself? callback on init function?
         new Thread(new Runnable() {
             public void run() {
-                // calculate best button size
-                int calculatedHeight = (int) (body.getMeasuredHeight() * 0.9 / rows);
-                int calculatedWidth = (int) (body.getMeasuredWidth() * 0.9 / columns);
-                int calculatedSize = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
-                canvas.pixelRadius = calculatedSize;
+                // calculate best pixel size
+                int calculatedHeight = (body.getMeasuredHeight() - 100) / rows;
+                int calculatedWidth = (body.getMeasuredWidth() - 100) / columns;
+                canvas.pixelRadius = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
 
-                // setup canvas buttons
+                // setup canvas pixels
                 canvas.pixels = new TextView[rows][columns];
 
                 for (int i = 0; i < rows; i++) {
                     // make rows
                     LinearLayout row = new LinearLayout(MainActivity.this);
-                    row.setOrientation(LinearLayout.VERTICAL);
+                    row.setOrientation(LinearLayout.HORIZONTAL);
 
                     for (int j = 0; j < columns; j++) {
-                        // make button
+                        // make pixel
                         TextView pixel = new TextView(MainActivity.this);
-                        pixel.setHeight(calculatedSize);
-                        pixel.setWidth(calculatedSize);
+                        pixel.setHeight(canvas.pixelRadius);
+                        pixel.setWidth(canvas.pixelRadius);
                         pixel.setBackgroundColor(Color.WHITE);
                         canvas.pixels[i][j] = pixel;
                         row.addView(pixel);
@@ -202,14 +203,15 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                 int x = (int) motionEvent.getRawX();
                 int y = (int) motionEvent.getRawY();
 
-                // find button under current coordinates
+                // find pixel under current coordinates
                 rowloop: for (TextView[] row : canvas.pixels) {
                     for (TextView pixel : row) {
                         int params[] = new int[2];
                         pixel.getLocationOnScreen(params);
+                        Log.d("pixel","x"+params[0]+" y"+params[1]);
 
-                        if ( x >= params[0] - canvas.pixelRadius && x <= params[0] + canvas.pixelRadius) {
-                            if ( y >= params[1] - canvas.pixelRadius && y <= params[1] + canvas.pixelRadius) {
+                        if ( y >= params[1] - canvas.pixelRadius && y <= params[1] + canvas.pixelRadius) {
+                            if ( x >= params[0] - canvas.pixelRadius && x <= params[0] + canvas.pixelRadius) {
                                 if (pickingColor) {
                                     setColor(((ColorDrawable) pixel.getBackground()).getColor());
                                     pickingColor = false;
