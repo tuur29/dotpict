@@ -36,17 +36,25 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
     private boolean dialogOpen = false;
     private boolean pickingColor = false;
 
-    private CanvasView canvas;
+    private CanvasView canvas = null;
+
+    private int[] tempPixelColors = null;
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putBoolean("dialogOpen", dialogOpen);
         savedInstanceState.putInt("color", color);
+
+        if (canvas != null) {
+            savedInstanceState.putInt("rows", canvas.pixels.length);
+            savedInstanceState.putInt("columns", canvas.pixels[0].length);
+            savedInstanceState.putIntArray("pixels", canvas.toArray());
+        }
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         body = findViewById(R.id.body);
@@ -55,15 +63,25 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         fillButton = findViewById(R.id.fillButton);
         pickerButton = findViewById(R.id.pickerButton);
         clearButton = findViewById(R.id.clearButton);
-
         if (savedInstanceState != null) {
             dialogOpen = savedInstanceState.getBoolean("dialogOpen");
             setColor(savedInstanceState.getInt("color"));
+
+            if (savedInstanceState.get("rows") != null) {
+                tempPixelColors = savedInstanceState.getIntArray("pixels");
+                // wait until body has been drawn
+                body.post( new Runnable() {
+                    @Override
+                    public void run() {
+                        onDialogPositiveClick(savedInstanceState.getInt("rows"), savedInstanceState.getInt("columns"));
+                    }
+                });
+            }
         } else {
             setColor(ColorUtils.setAlphaComponent( getResources().getColor(R.color.colorAccent), 255));
+            openDialog();
         }
 
-        openDialog();
 
         // open color picker, source: https://github.com/jaredrummler/ColorPicker
         colorButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
@@ -130,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
 
     @Override
     public void onDialogPositiveClick(final int rows, final int columns) {
-
         dialogOpen = false;
         // show loading spinner
         progressBar.setVisibility(View.VISIBLE);
@@ -140,6 +157,9 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
         canvas.setOrientation(LinearLayout.VERTICAL);
         canvas.setBackgroundColor(Color.WHITE);
         canvas.setElevation(8);
+
+        final int[] pixelColors = tempPixelColors;
+        tempPixelColors = null;
 
         // TODO: move to init function? how to add child views in itself? callback on init function?
         new Thread(new Runnable() {
@@ -162,7 +182,10 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                         TextView pixel = new TextView(MainActivity.this);
                         pixel.setHeight(canvas.pixelRadius);
                         pixel.setWidth(canvas.pixelRadius);
-                        pixel.setBackgroundColor(Color.WHITE);
+                        int color = Color.WHITE;
+                        if (pixelColors != null)
+                            color = pixelColors[i*columns+j];
+                        pixel.setBackgroundColor(color);
                         canvas.pixels[i][j] = pixel;
                         row.addView(pixel);
                     }
@@ -208,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements DimensionDialogFr
                     for (TextView pixel : row) {
                         int params[] = new int[2];
                         pixel.getLocationOnScreen(params);
-                        Log.d("pixel","x"+params[0]+" y"+params[1]);
 
                         if ( y >= params[1] - canvas.pixelRadius && y <= params[1] + canvas.pixelRadius) {
                             if ( x >= params[0] - canvas.pixelRadius && x <= params[0] + canvas.pixelRadius) {
