@@ -256,6 +256,7 @@ public class DrawFragment extends Fragment {
                 body.addView(canvas, 0);
                 body.invalidate();
 
+                // center canvas
                 RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) canvas.getLayoutParams();
                 layoutParams.height = RelativeLayout.LayoutParams.WRAP_CONTENT;
                 layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;

@@ -20,6 +20,7 @@ public class CanvasView extends LinearLayout {
     }
     public CanvasView(Context context, AttributeSet attrs, int defStyle) { super(context, attrs, defStyle); }
 
+    // fill canvas to one color
     public void fill(int color) {
         for (TextView[] row : pixels)
             for (TextView button: row)
@@ -51,6 +52,7 @@ public class CanvasView extends LinearLayout {
         return list.substring(0, list.length() - 1);
     }
 
+    // allow coloring multiple pixels on touch
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return true;

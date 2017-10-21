@@ -11,10 +11,6 @@ import android.widget.SeekBar;
 
 public class DimensionDialogFragment extends DialogFragment {
 
-    public interface DimensionDialogListener {
-        void onDialogPositiveClick(int rows, int cols);
-    }
-
     DimensionDialogListener dListener;
 
     @Override
@@ -30,13 +26,12 @@ public class DimensionDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setView(inflater.inflate(R.layout.dialog, null, false))
-        .setPositiveButton(R.string.generate, new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(inflater.inflate(R.layout.dialog, null, false)).setPositiveButton(R.string.generate, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-            // get input
+            // get number of rows & columns
             AlertDialog d = (AlertDialog) dialog;
             SeekBar rows = d.findViewById(R.id.seekBarRows);
             SeekBar columns = d.findViewById(R.id.seekBarColumns);
@@ -46,5 +41,9 @@ public class DimensionDialogFragment extends DialogFragment {
         });
 
         return builder.create();
+    }
+
+    public interface DimensionDialogListener {
+        void onDialogPositiveClick(int rows, int cols);
     }
 }

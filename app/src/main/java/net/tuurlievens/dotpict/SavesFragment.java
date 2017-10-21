@@ -86,10 +86,12 @@ public class SavesFragment extends Fragment {
         mListener = null;
     }
 
-    // only add to list when not already in
+    // add new save names to list
     public void addSave(String key) {
-        saves.add(key);
-        adapter.notifyDataSetChanged();
+        if (!saves.contains(key)) {
+            saves.add(key);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public interface SavesFragmentListener {

@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-class SaveAdapter extends ArrayAdapter<String> {
+public class SaveAdapter extends ArrayAdapter<String> {
 
     private ArrayList<String> data_text;
     private Context context;
@@ -38,12 +38,11 @@ class SaveAdapter extends ArrayAdapter<String> {
             holder.button = convertView.findViewById(R.id.deletesave);
 
             convertView.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-
+        // remove saved drawing
         final String text = data_text.get(position);
         holder.text.setText(text);
         holder.button.setOnClickListener(new View.OnClickListener() {

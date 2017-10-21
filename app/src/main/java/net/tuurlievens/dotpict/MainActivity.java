@@ -16,6 +16,7 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
 
     private boolean dialogOpen = false;
     private boolean dualpane = false;
+    private boolean firsttime = true;
     private DrawFragment drawfragment;
     private SavesFragment savesfragment;
 
@@ -26,8 +27,7 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
 
         if (savedInstanceState != null) {
             dialogOpen = savedInstanceState.getBoolean("dialogOpen");
-            // inform people of secondary tools
-            Toast.makeText(MainActivity.this, R.string.toolsmessage, Toast.LENGTH_SHORT).show();
+            firsttime = false;
         } else {
             openDialog();
         }
@@ -35,15 +35,15 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         drawfragment = (DrawFragment) getSupportFragmentManager().findFragmentById(R.id.drawfragment);
         savesfragment = (SavesFragment) getSupportFragmentManager().findFragmentById(R.id.savesfragment);
 
+        // portrait or landscape mode
         View savesView = findViewById(R.id.savesfragment);
         dualpane = savesView != null && savesView.getVisibility() == View.VISIBLE;
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean("dialogOpen", dialogOpen);
-        // TODO: turning too quickly crashes app?
+        // TODO: second time landscape mode crashes app
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -61,27 +61,37 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
 
     @Override
     public void onDialogPositiveClick(int rows, int columns) {
+        // make canvas
         dialogOpen = false;
         drawfragment.generate(rows,columns);
+
+        // inform people of secondary tools
+        if (firsttime)
+            Toast.makeText(MainActivity.this, R.string.toolsmessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onCanvasResetted() {
         openDialog();
+        firsttime = false;
     }
 
     @Override
     public void onCanvasSaved(String key, String data) {
+        // save new drawing to file
         SharedPreferences sharedPref = getSharedPreferences("saves", Context.MODE_PRIVATE);
         sharedPref.edit().putString(key,data).commit();
-        Toast.makeText(MainActivity.this, R.string.savedmessage, Toast.LENGTH_SHORT).show();
+        String message = getString(R.string.savedmessage) + (!dualpane ? "\n"+getString(R.string.longpresssavemessage) : "");
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
 
+        // immediately add to list
         if (dualpane)
             savesfragment.addSave(key);
     }
 
     @Override
     public void openSaves() {
+        // open savefragment for portrait mode
         Intent intent = new Intent(MainActivity.this, SavesActivity.class);
         startActivityForResult(intent, 1);
     }
@@ -99,7 +109,6 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
 
     @Override
     public void onSaveLoad(String key) {
-
         // get data from storage
         SharedPreferences sharedPref = getSharedPreferences("saves", Context.MODE_PRIVATE);
         String[] arr = sharedPref.getString(key,"").split(";");
