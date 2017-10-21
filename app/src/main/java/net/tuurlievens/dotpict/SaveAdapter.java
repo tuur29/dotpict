@@ -13,10 +13,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class SaveAdapter extends ArrayAdapter<String> {
+class SaveAdapter extends ArrayAdapter<String> {
 
     private ArrayList<String> data_text;
-    private Context context;
+    final private Context context;
 
     SaveAdapter(Context context, ArrayList<String> text) {
         super(context, R.layout.saveitem, text);
@@ -60,7 +60,7 @@ public class SaveAdapter extends ArrayAdapter<String> {
                         SaveAdapter.this.notifyDataSetChanged();
 
                         SharedPreferences sharedPref = context.getSharedPreferences("saves", Context.MODE_PRIVATE);
-                        sharedPref.edit().remove(text).commit();
+                        sharedPref.edit().remove(text).apply();
                     }
                 });
                 dialog.setNegativeButton("Close", new DialogInterface.OnClickListener() {

@@ -1,93 +1,84 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/body"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.tuurlievens.dotpict.DrawFragment">
+    android:layout_gravity="center_horizontal"
+    android:orientation="horizontal"
+    tools:context="net.tuurlievens.dotpict.DrawFragment"
+    tools:layout_editor_absoluteX="0"
+    tools:layout_editor_absoluteY="0">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/body"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:background="@color/colorBackground"
-        android:orientation="horizontal"
-        tools:context="net.tuurlievens.dotpict.MainActivity"
-        tools:layout_editor_absoluteX="0"
-        tools:layout_editor_absoluteY="0">
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/colorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        app:srcCompat="@drawable/ic_color_lens_white_32dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="20dp"
-            android:clickable="true"
-            app:srcCompat="@drawable/ic_color_lens_white_32dp" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fillButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="85dp"
+        android:layout_marginEnd="28dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_format_color_fill_white_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fillButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="85dp"
-            android:layout_marginEnd="28dp"
-            android:clickable="true"
-            android:visibility="invisible"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_format_color_fill_white_24dp" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/pickerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="130dp"
+        android:layout_marginEnd="28dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_colorize_white_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/pickerButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="130dp"
-            android:layout_marginEnd="28dp"
-            android:clickable="true"
-            android:visibility="invisible"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_colorize_white_24dp" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/clearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="175dp"
+        android:layout_marginEnd="28dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_clear_white_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/clearButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="175dp"
-            android:layout_marginEnd="28dp"
-            android:clickable="true"
-            android:visibility="invisible"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_clear_white_24dp" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="220dp"
+        android:layout_marginEnd="28dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_save_white_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/saveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="220dp"
-            android:layout_marginEnd="28dp"
-            android:clickable="true"
-            android:visibility="invisible"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_save_white_24dp" />
+    <ProgressBar
+        android:id="@+id/progress_loader"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible" />
 
-        <ProgressBar
-            android:id="@+id/progress_loader"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_weight="1"
-            android:visibility="visible" />
-
-    </RelativeLayout>
-
-</FrameLayout>
+</RelativeLayout>

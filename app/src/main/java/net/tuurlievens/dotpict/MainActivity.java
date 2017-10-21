@@ -47,7 +47,7 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public void openDialog() {
+    private void openDialog() {
         // prevent multiple dialog on orientation change
         if (dialogOpen)
             return;
@@ -80,7 +80,7 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
     public void onCanvasSaved(String key, String data) {
         // save new drawing to file
         SharedPreferences sharedPref = getSharedPreferences("saves", Context.MODE_PRIVATE);
-        sharedPref.edit().putString(key,data).commit();
+        sharedPref.edit().putString(key,data).apply();
         String message = getString(R.string.savedmessage) + (!dualpane ? "\n"+getString(R.string.longpresssavemessage) : "");
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
 
@@ -129,6 +129,8 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
     public void onColorSelected(int dialogId, int color) {
         drawfragment.setColor(color);
     }
+    @Override
+    public void onCloseSavesFragment() {}
     @Override
     public void onDialogDismissed(int dialogId) { }
 }

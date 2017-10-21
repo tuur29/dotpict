@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -17,16 +18,10 @@ import java.util.ArrayList;
 public class SavesFragment extends Fragment {
 
     private SavesFragmentListener mListener;
-    private ListView saveslist;
     private ArrayList<String> saves = new ArrayList<>();
-    SaveAdapter adapter;
+    private SaveAdapter adapter;
 
-    public SavesFragment() { }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public SavesFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,9 +32,25 @@ public class SavesFragment extends Fragment {
         saves = new ArrayList<>(sharedPref.getAll().keySet());
 
         // make saves list
-        saveslist = view.findViewById(R.id.saveslist);
+        ListView saveslist = view.findViewById(R.id.saveslist);
         adapter = new SaveAdapter(getContext(), saves);
         saveslist.setAdapter(adapter);
+
+        // add close button if has own activity & more padding
+        ImageView closebutton = view.findViewById(R.id.closebutton);
+        if (getArguments() != null && getArguments().containsKey("separateActivity")) {
+            ViewGroup body = view.findViewById(R.id.savesfragmentbody);
+            body.setPadding(30,30,30,30);
+
+            closebutton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onCloseSavesFragment();
+                }
+            });
+        } else {
+            closebutton.setVisibility(View.GONE);
+        }
 
         // load save
         saveslist.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -96,5 +107,6 @@ public class SavesFragment extends Fragment {
 
     public interface SavesFragmentListener {
         void onSaveLoad(String key);
+        void onCloseSavesFragment();
     }
 }

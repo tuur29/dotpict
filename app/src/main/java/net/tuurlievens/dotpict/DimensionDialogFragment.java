@@ -1,7 +1,7 @@
 package net.tuurlievens.dotpict;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -11,15 +11,15 @@ import android.widget.SeekBar;
 
 public class DimensionDialogFragment extends DialogFragment {
 
-    DimensionDialogListener dListener;
+    private DimensionDialogListener dListener;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            dListener = (DimensionDialogListener) activity;
+            dListener = (DimensionDialogListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement DimensionDialogListener");
+            throw new ClassCastException(context.toString() + " must implement DimensionDialogListener");
         }
     }
 

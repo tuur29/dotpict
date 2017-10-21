@@ -10,7 +10,7 @@
         android:layout_height="fill_parent"
         android:name="net.tuurlievens.dotpict.DrawFragment"
         android:layout_width="fill_parent"
-        android:layout_marginRight="200dp"
+        android:layout_marginEnd="200dp"
         tools:layout="@layout/fragment_draw" />
 
     <fragment

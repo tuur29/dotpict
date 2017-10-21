@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -41,15 +42,9 @@ public class DrawFragment extends Fragment {
     private CanvasView canvas = null;
 
     public int[] tempPixelColors = null;
+    private DrawFragmentListener mListener;
 
     public DrawFragment() {}
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    DrawFragmentListener mListener;
 
     @Override
     public void onAttach(Context context) {
@@ -108,7 +103,7 @@ public class DrawFragment extends Fragment {
                 });
             }
         } else {
-            setColor(ColorUtils.setAlphaComponent(getResources().getColor(R.color.colorAccent), 255));
+            setColor(ColorUtils.setAlphaComponent(ContextCompat.getColor(getContext(),R.color.colorAccent), 255));
         }
 
         // open color picker, source: https://github.com/jaredrummler/ColorPicker
@@ -172,7 +167,11 @@ public class DrawFragment extends Fragment {
                 final EditText input = new EditText(getContext());
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 input.setHint(R.string.savename);
-                dialog.setView(input,60,0,60,0);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMarginStart(60);
+                params.setMarginEnd(60);
+                input.setLayoutParams(params);
+                dialog.setView(input);
 
                 dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
