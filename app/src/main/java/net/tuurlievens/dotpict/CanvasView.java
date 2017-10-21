@@ -40,6 +40,18 @@ public class CanvasView extends LinearLayout {
     }
 
     @Override
+    public String toString() {
+        String list = pixels.length+";"+pixels[0].length+";";
+        for (TextView[] row : pixels) {
+            for (TextView pixel : row) {
+                list += ((ColorDrawable) pixel.getBackground()).getColor()+",";
+            }
+        }
+
+        return list.substring(0, list.length() - 1);
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return true;
     }

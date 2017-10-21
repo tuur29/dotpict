@@ -4,23 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <fragment android:id="@+id/drawfragment"
         android:layout_height="fill_parent"
         android:name="net.tuurlievens.dotpict.DrawFragment"
         android:layout_width="fill_parent"
+        android:layout_marginRight="200dp"
         tools:layout="@layout/fragment_draw" />
 
-    <FrameLayout
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorMenuBackground"
+    <fragment
+        android:id="@+id/savesfragment"
+        android:name="net.tuurlievens.dotpict.SavesFragment"
+        android:layout_width="200dp"
+        android:layout_height="fill_parent"
         android:layout_alignParentEnd="true"
-        android:visibility="gone">
-
-    </FrameLayout>
+        tools:layout="@layout/fragment_saves" />
 
 </RelativeLayout>

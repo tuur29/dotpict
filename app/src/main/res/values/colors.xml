@@ -5,4 +5,6 @@
     <color name="colorAccent">#FFFF9800</color>
     <color name="colorBackground">#FFf8f8f8</color>
     <color name="colorBackgroundDark">#FF222222</color>
+    <color name="colorMenuBackground">#FFFFFFFF</color>
+    <color name="colorMenuBackgroundDark">#FF000000</color>
 </resources>
