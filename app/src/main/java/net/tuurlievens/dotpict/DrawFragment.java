@@ -169,11 +169,10 @@ public class DrawFragment extends Fragment {
                 dialog.setTitle(R.string.save);
                 dialog.setMessage(R.string.savemessage);
 
-                // TODO: Add margin to edittext in save dialog
                 final EditText input = new EditText(getContext());
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 input.setHint(R.string.savename);
-                dialog.setView(input);
+                dialog.setView(input,60,0,60,0);
 
                 dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
