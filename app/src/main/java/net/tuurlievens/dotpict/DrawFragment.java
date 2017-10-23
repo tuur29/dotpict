@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -176,7 +177,11 @@ public class DrawFragment extends Fragment {
                 dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mListener.onCanvasSaved(input.getText().toString(), canvas.toString());
+                        if (!TextUtils.isEmpty(input.getText())) {
+                            mListener.onCanvasSaved(input.getText().toString(), canvas.toString());
+                        } else {
+                            Toast.makeText(getActivity(), R.string.invalidsavename, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
