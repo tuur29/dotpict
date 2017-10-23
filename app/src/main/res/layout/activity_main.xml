@@ -12,15 +12,4 @@
         android:layout_width="fill_parent"
         tools:layout="@layout/fragment_draw" />
 
-    <FrameLayout
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorMenuBackground"
-        android:layout_alignParentEnd="true"
-        android:visibility="gone">
-
-    </FrameLayout>
-
 </RelativeLayout>

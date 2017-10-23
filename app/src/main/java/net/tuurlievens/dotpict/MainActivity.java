@@ -32,12 +32,11 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
             openDialog();
         }
 
-        drawfragment = (DrawFragment) getSupportFragmentManager().findFragmentById(R.id.drawfragment);
-        savesfragment = (SavesFragment) getSupportFragmentManager().findFragmentById(R.id.savesfragment);
-
         // portrait or landscape mode
-        View savesView = findViewById(R.id.savesfragment);
-        dualpane = savesView != null && savesView.getVisibility() == View.VISIBLE;
+        savesfragment = (SavesFragment) getSupportFragmentManager().findFragmentById(R.id.savesfragment);
+        dualpane = savesfragment != null;
+
+        drawfragment = (DrawFragment) getSupportFragmentManager().findFragmentById(R.id.drawfragment);
     }
 
     @Override
