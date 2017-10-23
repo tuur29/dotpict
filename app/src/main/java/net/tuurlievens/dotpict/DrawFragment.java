@@ -2,10 +2,13 @@ package net.tuurlievens.dotpict;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -27,6 +30,8 @@ import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 
+import static android.app.Activity.RESULT_OK;
+
 public class DrawFragment extends Fragment {
 
     private ViewGroup body;
@@ -36,6 +41,7 @@ public class DrawFragment extends Fragment {
     private FloatingActionButton pickerButton;
     private FloatingActionButton clearButton;
     private FloatingActionButton saveButton;
+    private FloatingActionButton cameraButton;
 
     private int color;
     private boolean pickingColor = false;
@@ -87,6 +93,7 @@ public class DrawFragment extends Fragment {
         pickerButton = view.findViewById(R.id.pickerButton);
         clearButton = view.findViewById(R.id.clearButton);
         saveButton = view.findViewById(R.id.saveButton);
+        cameraButton = view.findViewById(R.id.cameraButton);
 
         if (savedInstanceState != null) {
             setColor(savedInstanceState.getInt("color"));
@@ -198,7 +205,36 @@ public class DrawFragment extends Fragment {
             }
         });
 
+        cameraButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, 2);
+                }
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2 && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            // TODO: Rotate picture according to EXIF data
+            Bitmap photo = (Bitmap) extras.get("data");
+            // TODO: ask for rows & columns count
+            int rows = 30;
+            int columns = rows * (photo.getWidth() / photo.getHeight());
+            photo = Bitmap.createScaledBitmap(photo, rows, columns, false);
+            int[] pixels = new int[rows*columns];
+            photo.getPixels(pixels, 0, columns, 0, 0, rows, columns);
+            tempPixelColors = pixels;
+            generate(rows,columns);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     public void generate(final int rows, final int columns) {
@@ -309,18 +345,18 @@ public class DrawFragment extends Fragment {
     }
 
     private void showExtraTools() {
-        for (FloatingActionButton button : new FloatingActionButton[] {fillButton,pickerButton,clearButton,saveButton} )
+        for (FloatingActionButton button : new FloatingActionButton[] {fillButton,pickerButton,clearButton,saveButton,cameraButton} )
             button.setVisibility(View.VISIBLE);
     }
 
     private void hideExtraTools() {
-        for (FloatingActionButton button : new FloatingActionButton[] {fillButton,pickerButton,clearButton,saveButton} )
+        for (FloatingActionButton button : new FloatingActionButton[] {fillButton,pickerButton,clearButton,saveButton,cameraButton} )
             button.setVisibility(View.INVISIBLE);
     }
 
     public void setColor(int color) {
         this.color = color;
-        for (FloatingActionButton button : new FloatingActionButton[] {colorButton,fillButton,pickerButton,clearButton,saveButton} )
+        for (FloatingActionButton button : new FloatingActionButton[] {colorButton,fillButton,pickerButton,clearButton,saveButton,cameraButton} )
             button.setBackgroundTintList(ColorStateList.valueOf(color));
     }
 
