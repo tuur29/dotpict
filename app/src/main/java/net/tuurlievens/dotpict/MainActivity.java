@@ -1,13 +1,11 @@
 package net.tuurlievens.dotpict;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.view.View;
 import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
@@ -97,10 +95,8 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            if (Activity.RESULT_OK == resultCode) {
-                onSaveLoad(data.getStringExtra("key"));
-            }
+        if (requestCode == 1 && RESULT_OK == resultCode) {
+            onSaveLoad(data.getStringExtra("key"));
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
