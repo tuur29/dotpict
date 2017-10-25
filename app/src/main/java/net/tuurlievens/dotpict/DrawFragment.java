@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -16,6 +19,7 @@ import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +29,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -212,6 +217,7 @@ public class DrawFragment extends Fragment {
                 if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, 2);
                 }
+                hideExtraTools();
             }
         });
 
@@ -219,19 +225,62 @@ public class DrawFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        // photo taken
         if (requestCode == 2 && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            // TODO: Rotate picture according to EXIF data
-            Bitmap photo = (Bitmap) extras.get("data");
-            // TODO: ask for rows & columns count
-            int rows = 30;
-            int columns = rows * (photo.getWidth() / photo.getHeight());
-            photo = Bitmap.createScaledBitmap(photo, rows, columns, false);
-            int[] pixels = new int[rows*columns];
-            photo.getPixels(pixels, 0, columns, 0, 0, rows, columns);
-            tempPixelColors = pixels;
-            generate(rows,columns);
+
+            // ask for rows & columns count
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+            dialog.setTitle(R.string.photoheight);
+            dialog.setMessage(R.string.row);
+
+            // add slider
+            final SeekBar input = new SeekBar(getContext());
+            input.setProgress(20);
+            input.setMax(37);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMarginStart(100);
+            params.setMarginEnd(100);
+            input.setLayoutParams(params);
+            dialog.setView(input);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    // get camera sensor orientation
+                    CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
+                    int orientation = 0;
+                    try {
+                        String cameraId = manager.getCameraIdList()[0];
+                        CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+                        orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+                    } catch (Exception e){}
+
+                    // get picture
+                    Bundle extras = data.getExtras();
+                    Bitmap photo = (Bitmap) extras.get("data");
+
+                    // resize photo
+                    int rows = input.getProgress() + 3;
+                    int columns = rows * (photo.getWidth() / photo.getHeight());
+                    photo = Bitmap.createScaledBitmap(photo, rows, columns, false);
+
+                    // rotate photo based on picture orientation
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(orientation);
+                    Bitmap rotatedPhoto = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+
+                    // convert to color array
+                    int[] pixels = new int[rotatedPhoto.getWidth()*rotatedPhoto.getHeight()];
+                    rotatedPhoto.getPixels(pixels, 0, rotatedPhoto.getWidth(), 0, 0, rotatedPhoto.getHeight(), rotatedPhoto.getWidth());
+                    tempPixelColors = pixels;
+                    generate(rotatedPhoto.getHeight(),rotatedPhoto.getWidth());
+                }
+            });
+
+            dialog.show();
+
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

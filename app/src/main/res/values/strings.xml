@@ -17,4 +17,5 @@
     <string name="delete">Delete Drawing</string>
     <string name="deletemessage">Are you sure you want to delete this drawing?</string>
     <string name="invalidsavename">Picture not saved.\nThe savename cannot be empty.</string>
+    <string name="photoheight">Photo height</string>
 </resources>
