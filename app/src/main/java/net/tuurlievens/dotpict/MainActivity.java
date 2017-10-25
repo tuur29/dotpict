@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
@@ -23,18 +24,23 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState != null) {
-            dialogOpen = savedInstanceState.getBoolean("dialogOpen");
-            firsttime = false;
-        } else {
-            openDialog();
-        }
-
         // portrait or landscape mode
         savesfragment = (SavesFragment) getSupportFragmentManager().findFragmentById(R.id.savesfragment);
         dualpane = savesfragment != null;
 
         drawfragment = (DrawFragment) getSupportFragmentManager().findFragmentById(R.id.drawfragment);
+
+        if (savedInstanceState != null) {
+            dialogOpen = savedInstanceState.getBoolean("dialogOpen");
+            firsttime = false;
+        } else {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    onDialogPositiveClick(20,20);
+                }
+            }, 500);
+        }
     }
 
     @Override
