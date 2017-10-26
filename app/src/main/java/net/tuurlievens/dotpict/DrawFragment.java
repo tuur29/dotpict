@@ -14,8 +14,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -29,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
@@ -38,7 +35,6 @@ import static android.app.Activity.RESULT_OK;
 
 public class DrawFragment extends Fragment {
 
-    private int color;
     private boolean pickingColor = false;
     private ViewGroup body;
     private ViewGroup buttonlist;
@@ -66,10 +62,10 @@ public class DrawFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("color", color);
+        savedInstanceState.putInt("color", canvas.getColor());
         if (canvas != null) {
-            savedInstanceState.putInt("rows", canvas.pixels.length);
-            savedInstanceState.putInt("columns", canvas.pixels[0].length);
+            savedInstanceState.putInt("rows", canvas.getRows());
+            savedInstanceState.putInt("columns", canvas.getColumns());
             savedInstanceState.putIntArray("pixels", canvas.toArray());
         }
     }
@@ -103,7 +99,6 @@ public class DrawFragment extends Fragment {
                 });
             }
         } else {
-            setColor(ColorUtils.setAlphaComponent(ContextCompat.getColor(getContext(), R.color.colorAccent), 255));
             body.post(new Runnable() {
                 @Override
                 public void run() {
@@ -116,7 +111,7 @@ public class DrawFragment extends Fragment {
         view.findViewById(R.id.colorButton).setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ColorPickerDialog.newBuilder().setAllowPresets(true).setColor(color).show(getActivity());
+                ColorPickerDialog.newBuilder().setAllowPresets(true).setColor(canvas.getColor()).show(getActivity());
                 buttonlist.setVisibility(View.INVISIBLE);
             }
         });
@@ -146,7 +141,7 @@ public class DrawFragment extends Fragment {
         view.findViewById(R.id.fillButton).setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                canvas.fill(color);
+                canvas.fill();
                 buttonlist.setVisibility(View.INVISIBLE);
             }
         });
@@ -275,17 +270,17 @@ public class DrawFragment extends Fragment {
         }
     }
 
-
     public void generate(final int rows, final int columns) {
         generate(rows,columns,null);
     }
 
     public void generate(final int rows, final int columns, final int[] pixelColors) {
-        if (body != null && canvas != null)
-            body.removeView(canvas);
-
         // show loading spinner
         progressbar.setVisibility(View.VISIBLE);
+
+        // remove old canvas
+        if (body != null && canvas != null)
+            body.removeView(canvas);
 
         // make canvas
         final CanvasView canvas = new CanvasView(getActivity());
@@ -293,94 +288,45 @@ public class DrawFragment extends Fragment {
         canvas.setBackgroundColor(Color.WHITE);
         canvas.setElevation(8);
 
-        // TODO: move to init function? how to add child views in itself? callback on init function?
         new Thread(new Runnable() {
             public void run() {
-                // calculate best pixel size
-                int calculatedHeight = (body.getMeasuredHeight() - 100) / rows;
-                int calculatedWidth = (body.getMeasuredWidth() - 100) / columns;
-                canvas.pixelRadius = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
+                canvas.generate(body,rows,columns,pixelColors);
 
-                // setup canvas pixels
-                canvas.pixels = new TextView[rows][columns];
-
-                for (int i = 0; i < rows; i++) {
-                    // make rows
-                    LinearLayout row = new LinearLayout(getActivity());
-                    row.setOrientation(LinearLayout.HORIZONTAL);
-
-                    for (int j = 0; j < columns; j++) {
-                        // make pixel
-                        TextView pixel = new TextView(getActivity());
-                        pixel.setHeight(canvas.pixelRadius);
-                        pixel.setWidth(canvas.pixelRadius);
-                        int color = Color.WHITE;
-                        if (pixelColors != null)
-                            color = pixelColors[i*columns+j];
-                        pixel.setBackgroundColor(color);
-                        canvas.pixels[i][j] = pixel;
-                        row.addView(pixel);
-                    }
-                    canvas.addView(row);
-                }
-                addCanvas(canvas);
-            }
-        }).start();
-
-    }
-
-    private void addCanvas(final CanvasView canvas) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressbar.setVisibility(View.INVISIBLE);
-                body.addView(canvas, 0);
-
-                // inform people of secondary tools
-                Toast.makeText(getActivity(), R.string.toolsmessage, Toast.LENGTH_SHORT).show();
-
-                // center canvas
-                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) canvas.getLayoutParams();
-                layoutParams.height = RelativeLayout.LayoutParams.WRAP_CONTENT;
-                layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
-                layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-                canvas.setLayoutParams(layoutParams);
-
-                // touch 'canvas'
-                canvas.setOnTouchListener(new View.OnTouchListener() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
-                    public boolean onTouch(View v, MotionEvent motionEvent) {
-                        int x = (int) motionEvent.getRawX();
-                        int y = (int) motionEvent.getRawY();
+                    public void run() {
+                        progressbar.setVisibility(View.INVISIBLE);
+                        body.addView(canvas, 0);
 
-                        // find pixel under current coordinates
-                        rowloop: for (TextView[] row : canvas.pixels) {
-                            for (TextView pixel : row) {
-                                int params[] = new int[2];
-                                pixel.getLocationOnScreen(params);
+                        // inform people of secondary tools
+                        Toast.makeText(getActivity(), R.string.toolsmessage, Toast.LENGTH_SHORT).show();
 
-                                if ( y >= params[1] - canvas.pixelRadius && y <= params[1] + canvas.pixelRadius) {
-                                    if ( x >= params[0] - canvas.pixelRadius && x <= params[0] + canvas.pixelRadius) {
-                                        if (pickingColor) {
-                                            setColor(((ColorDrawable) pixel.getBackground()).getColor());
-                                            pickingColor = false;
-                                        } else {
-                                            pixel.setBackgroundColor(color);
-                                        }
-                                        break rowloop;
-                                    }
-                                } else {
-                                    continue rowloop;
+                        // center canvas
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) canvas.getLayoutParams();
+                        layoutParams.height = RelativeLayout.LayoutParams.WRAP_CONTENT;
+                        layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
+                        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+                        canvas.setLayoutParams(layoutParams);
+
+                        canvas.setOnTouchListener(new CanvasView.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                if (pickingColor) {
+                                    setColor( ((ColorDrawable) canvas.findPixel(motionEvent).getBackground()).getColor() );
+                                    pickingColor = false;
+                                    return false;
                                 }
+                                return false;
                             }
-                        }
-                        return true;
+                        });
+
+                        registerCanvas(canvas);
                     }
                 });
 
-                registerCanvas(canvas);
             }
-        });
+        }).start();
+
     }
 
     private void registerCanvas(final CanvasView canvas) {
@@ -388,7 +334,8 @@ public class DrawFragment extends Fragment {
     }
 
     public void setColor(int color) {
-        this.color = color;
+        if (canvas != null)
+            canvas.color = color;
         if (getView() != null) {
             getView().findViewById(R.id.colorButton).setBackgroundTintList(ColorStateList.valueOf(color));
             for (int i = 0; i < buttonlist.getChildCount(); i++)

@@ -1,16 +1,24 @@
 package net.tuurlievens.dotpict;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class CanvasView extends LinearLayout {
 
-    public TextView[][] pixels = null;
-    public int pixelRadius = 0;
+    private TextView[][] pixels = null;
+    private int pixelRadius = 0;
+
+    public int color = ColorUtils.setAlphaComponent(ContextCompat.getColor(getContext(), R.color.colorAccent), 255);
 
     public CanvasView(Context context) {
         super(context);
@@ -20,11 +28,68 @@ public class CanvasView extends LinearLayout {
     }
     public CanvasView(Context context, AttributeSet attrs, int defStyle) { super(context, attrs, defStyle); }
 
+
+    public int getColor() {
+        return color;
+    }
+
+    public int getRows() {
+        return pixels.length;
+    }
+
+    public int getColumns() {
+        return pixels[0].length;
+    }
+
+    public void generate(ViewGroup body, int rows, int columns, int[] pixelColors) {
+        // calculate best pixel size
+        int calculatedHeight = (body.getMeasuredHeight() - 100) / rows;
+        int calculatedWidth = (body.getMeasuredWidth() - 100) / columns;
+        pixelRadius = calculatedHeight < calculatedWidth ? calculatedHeight : calculatedWidth;
+
+        // setup canvas pixels
+        pixels = new TextView[rows][columns];
+
+        for (int i = 0; i < rows; i++) {
+            // make rows
+            LinearLayout row = new LinearLayout(getContext());
+            row.setOrientation(LinearLayout.HORIZONTAL);
+
+            for (int j = 0; j < columns; j++) {
+                // make pixel
+                TextView pixel = new TextView(getContext());
+                pixel.setHeight(pixelRadius);
+                pixel.setWidth(pixelRadius);
+                int color = Color.WHITE;
+                if (pixelColors != null)
+                    color = pixelColors[i*columns+j];
+                pixel.setBackgroundColor(color);
+                pixels[i][j] = pixel;
+                row.addView(pixel);
+            }
+            addView(row);
+        }
+    }
+
     // fill canvas to one color
-    public void fill(int color) {
+    public void fill() {
         for (TextView[] row : pixels)
-            for (TextView button: row)
+            for (TextView button : row)
                 button.setBackgroundColor(color);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.d("pixel","run");
+        findPixel(event).setBackgroundColor(color);
+        return true;
+
+    }
+    // allow coloring multiple pixels on touch
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        Log.d("pixel","intercept");
+        return true;
     }
 
     public int[] toArray() {
@@ -52,10 +117,28 @@ public class CanvasView extends LinearLayout {
         return list.substring(0, list.length() - 1);
     }
 
-    // allow coloring multiple pixels on touch
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return true;
-    }
+    public View findPixel(MotionEvent motionEvent) {
+        // find pixel under current coordinates
+        int x = (int) motionEvent.getRawX();
+        int y = (int) motionEvent.getRawY();
 
+        Log.d("pixel","" + x);
+
+        rowloop: for (TextView[] row : pixels) {
+            for (TextView pixel : row) {
+                int params[] = new int[2];
+                pixel.getLocationOnScreen(params);
+
+                if ( y >= params[1] - pixelRadius && y <= params[1] + pixelRadius) {
+                    if ( x >= params[0] - pixelRadius && x <= params[0] + pixelRadius) {
+                        return pixel;
+                    }
+                } else {
+                    continue rowloop;
+                }
+            }
+        }
+
+        return null;
+    }
 }
