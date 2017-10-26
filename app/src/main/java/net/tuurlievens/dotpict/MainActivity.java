@@ -6,13 +6,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 
 public class MainActivity extends FragmentActivity implements DimensionDialogFragment.DimensionDialogListener, DrawFragment.DrawFragmentListener, SavesFragment.SavesFragmentListener, ColorPickerDialogListener {
 
+    private boolean dualpane = false;
     private DrawFragment drawfragment;
     private SavesFragment savesfragment;
 
@@ -22,18 +25,25 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         setContentView(R.layout.activity_main);
 
         drawfragment = (DrawFragment) getSupportFragmentManager().findFragmentById(R.id.drawfragment);
-        if (findViewById(R.id.portrait) == null) {
-            savesfragment = (SavesFragment) getSupportFragmentManager().findFragmentById(R.id.savesfragment);
+        savesfragment = (SavesFragment) getSupportFragmentManager().findFragmentById(R.id.savesfragment);
+        if (findViewById(R.id.savesparent) == null) {
+            dualpane = true;
         } else {
-            savesfragment = new SavesFragment();
+            findViewById(R.id.closebutton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onCloseSavesFragment();
+                }
+            });
         }
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-        // TODO: second time landscape mode crashes app
         super.onSaveInstanceState(savedInstanceState);
     }
+
 
     // dimensions dialog
 
@@ -66,13 +76,12 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         // save new drawing to file on savename dialog positive click
         SharedPreferences sharedPref = getSharedPreferences("saves", Context.MODE_PRIVATE);
         sharedPref.edit().putString(key,data).apply();
-        String message = getString(R.string.savedmessage) + (savesfragment!=null ? "\n"+getString(R.string.longpresssavemessage) : "");
+        String message = getString(R.string.savedmessage) + (!dualpane ? "\n"+getString(R.string.longpresssavemessage) : "");
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
 
-        // update list when in portrait mode
-        if (savesfragment != null)
-            savesfragment.addSave(key);
+        savesfragment.addSave(key);
     }
+
 
     // loading saves
 
@@ -104,6 +113,7 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         drawfragment.generate(rows,columns,pixels);
     }
 
+
     // color picker
 
     @Override
@@ -111,26 +121,29 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         drawfragment.setColor(color);
     }
 
+
     // open saves fragment
 
     @Override
-    public void openSaves() {
-        if (findViewById(R.id.portrait) != null) {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean("singlepane", true);
-            savesfragment.setArguments(bundle);
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && findViewById(R.id.savesparent)!= null && findViewById(R.id.savesparent).getVisibility() == View.VISIBLE ) {
+            onCloseSavesFragment();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.portrait, savesfragment).addToBackStack(null).commit();
+    @Override
+    public void openSaves() {
+        if (findViewById(R.id.savesparent) != null) {
+            findViewById(R.id.savesparent).setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onCloseSavesFragment() {
-        if (findViewById(R.id.portrait) != null) {
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.remove(savesfragment).commit();
-        }
+        if (findViewById(R.id.savesparent) != null)
+            findViewById(R.id.savesparent).setVisibility(View.GONE);
     }
 
 }

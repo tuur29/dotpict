@@ -6,11 +6,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -21,11 +21,10 @@ public class SavesFragment extends Fragment {
     private ArrayList<String> saves = new ArrayList<>();
     private SaveAdapter adapter;
 
-    public SavesFragment() {}
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         if (context instanceof SavesFragmentListener)
             mListener = (SavesFragmentListener) context;
         else
@@ -42,31 +41,13 @@ public class SavesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_saves, container, false);
 
-        // load saves
         SharedPreferences sharedPref = getActivity().getSharedPreferences("saves", Context.MODE_PRIVATE);
         saves = new ArrayList<>(sharedPref.getAll().keySet());
-
-        // make saves list
-        ListView saveslist = view.findViewById(R.id.saveslist);
         adapter = new SaveAdapter(getContext(), saves);
+        adapter.notifyDataSetChanged();
+
+        ListView saveslist = view.findViewById(R.id.saveslist);
         saveslist.setAdapter(adapter);
-
-        // add close button if has own activity & more padding
-        ImageView closebutton = view.findViewById(R.id.closebutton);
-        if (getArguments() != null && getArguments().containsKey("singlepane")) {
-            ViewGroup body = view.findViewById(R.id.body);
-            body.setPadding(50,50,50,50);
-            body.setBackgroundColor(getResources().getColor(R.color.colorBackground));
-
-            closebutton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.onCloseSavesFragment();
-                }
-            });
-        } else {
-            closebutton.setVisibility(View.GONE);
-        }
 
         // load save
         saveslist.setOnItemClickListener(new ListView.OnItemClickListener() {
