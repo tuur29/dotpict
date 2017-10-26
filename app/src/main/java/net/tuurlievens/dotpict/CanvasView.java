@@ -80,15 +80,15 @@ public class CanvasView extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d("pixel","run");
-        findPixel(event).setBackgroundColor(color);
+        View pixel = findPixel(event);
+        if (pixel != null)
+            pixel.setBackgroundColor(color);
         return true;
 
     }
     // allow coloring multiple pixels on touch
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        Log.d("pixel","intercept");
         return true;
     }
 
@@ -121,8 +121,6 @@ public class CanvasView extends LinearLayout {
         // find pixel under current coordinates
         int x = (int) motionEvent.getRawX();
         int y = (int) motionEvent.getRawY();
-
-        Log.d("pixel","" + x);
 
         rowloop: for (TextView[] row : pixels) {
             for (TextView pixel : row) {

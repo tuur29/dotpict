@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
@@ -20,14 +21,27 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        savesfragment = (SavesFragment) getSupportFragmentManager().findFragmentById(R.id.savesfragment);
         drawfragment = (DrawFragment) getSupportFragmentManager().findFragmentById(R.id.drawfragment);
+        if (findViewById(R.id.portrait) == null) {
+            savesfragment = (SavesFragment) getSupportFragmentManager().findFragmentById(R.id.savesfragment);
+        } else {
+            savesfragment = new SavesFragment();
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
         // TODO: second time landscape mode crashes app
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    // dimensions dialog
+
+    private void askForDimensions() {
+        // ask for number of rows/cols
+        DialogFragment dialog = new DimensionDialogFragment();
+        dialog.setCancelable(false);
+        dialog.show(getSupportFragmentManager(), "dialog");
     }
 
     @Override
@@ -35,6 +49,12 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         // make canvas on dialog dimensions dialog positive click
         drawfragment.generate(rows,columns);
     }
+
+    @Override
+    public void onDialogDismissed(int dialogId) { }
+
+
+    // canvasview
 
     @Override
     public void onCanvasResetted() {
@@ -54,12 +74,7 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
             savesfragment.addSave(key);
     }
 
-    @Override
-    public void openSaves() {
-        // open savefragment for portrait mode
-        Intent intent = new Intent(MainActivity.this, SavesActivity.class);
-        startActivityForResult(intent, 1);
-    }
+    // loading saves
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -74,6 +89,7 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
     @Override
     public void onSaveLoad(String key) {
         // get data from storage
+
         SharedPreferences sharedPref = getSharedPreferences("saves", Context.MODE_PRIVATE);
         String[] arr = sharedPref.getString(key,"").split(";");
         int rows = Integer.parseInt(arr[0]);
@@ -88,20 +104,33 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         drawfragment.generate(rows,columns,pixels);
     }
 
+    // color picker
+
     @Override
     public void onColorSelected(int dialogId, int color) {
         drawfragment.setColor(color);
     }
 
-    private void askForDimensions() {
-        // ask for number of rows/cols
-        DialogFragment dialog = new DimensionDialogFragment();
-        dialog.setCancelable(false);
-        dialog.show(getSupportFragmentManager(), "dialog");
+    // open saves fragment
+
+    @Override
+    public void openSaves() {
+        if (findViewById(R.id.portrait) != null) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("singlepane", true);
+            savesfragment.setArguments(bundle);
+
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.portrait, savesfragment).addToBackStack(null).commit();
+        }
     }
 
     @Override
-    public void onCloseSavesFragment() {}
-    @Override
-    public void onDialogDismissed(int dialogId) { }
+    public void onCloseSavesFragment() {
+        if (findViewById(R.id.portrait) != null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.remove(savesfragment).commit();
+        }
+    }
+
 }

@@ -53,9 +53,10 @@ public class SavesFragment extends Fragment {
 
         // add close button if has own activity & more padding
         ImageView closebutton = view.findViewById(R.id.closebutton);
-        if (getArguments() != null && getArguments().containsKey("separateActivity")) {
+        if (getArguments() != null && getArguments().containsKey("singlepane")) {
             ViewGroup body = view.findViewById(R.id.body);
-            body.setPadding(30,30,30,30);
+            body.setPadding(50,50,50,50);
+            body.setBackgroundColor(getResources().getColor(R.color.colorBackground));
 
             closebutton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -79,6 +80,7 @@ public class SavesFragment extends Fragment {
                 dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mListener.onCloseSavesFragment();
                         mListener.onSaveLoad(saves.get(i));
                     }
                 });

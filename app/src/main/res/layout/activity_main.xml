@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/portrait"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <fragment android:id="@+id/drawfragment"
-        android:layout_height="fill_parent"
         android:name="net.tuurlievens.dotpict.DrawFragment"
+        android:layout_height="fill_parent"
         android:layout_width="fill_parent" />
+
+    <!--<fragment-->
+        <!--android:id="@+id/savesfragment"-->
+        <!--android:name="net.tuurlievens.dotpict.SavesFragment"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:layout_width="fill_parent" />-->
 
 </FrameLayout>
