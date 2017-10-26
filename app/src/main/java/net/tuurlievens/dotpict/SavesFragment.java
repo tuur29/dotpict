@@ -24,6 +24,21 @@ public class SavesFragment extends Fragment {
     public SavesFragment() {}
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof SavesFragmentListener)
+            mListener = (SavesFragmentListener) context;
+        else
+            throw new RuntimeException(context.toString() + " must implement SavesFragmentListener");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_saves, container, false);
 
@@ -39,7 +54,7 @@ public class SavesFragment extends Fragment {
         // add close button if has own activity & more padding
         ImageView closebutton = view.findViewById(R.id.closebutton);
         if (getArguments() != null && getArguments().containsKey("separateActivity")) {
-            ViewGroup body = view.findViewById(R.id.savesfragmentbody);
+            ViewGroup body = view.findViewById(R.id.body);
             body.setPadding(30,30,30,30);
 
             closebutton.setOnClickListener(new View.OnClickListener() {
@@ -79,22 +94,6 @@ public class SavesFragment extends Fragment {
         });
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof SavesFragmentListener) {
-            mListener = (SavesFragmentListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement SavesFragmentListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     // add new save names to list
