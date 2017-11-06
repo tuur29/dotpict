@@ -13,6 +13,10 @@ import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 
+// TODO: fix fragments
+// TODO: save to sqlite instead of settings
+// TODO: crashes on picture convert to high row count
+
 public class MainActivity extends FragmentActivity implements DimensionDialogFragment.DimensionDialogListener, DrawFragment.DrawFragmentListener, SavesFragment.SavesFragmentListener, ColorPickerDialogListener {
 
     private boolean dualpane = false;
