@@ -52,7 +52,7 @@ class SaveAdapter extends ArrayAdapter<Save> {
                 dialog.setTitle(R.string.delete);
                 dialog.setMessage(R.string.deletemessage);
 
-                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final Save save = getItem(position);
@@ -66,7 +66,7 @@ class SaveAdapter extends ArrayAdapter<Save> {
                         }).start();
                     }
                 });
-                dialog.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

@@ -9,8 +9,7 @@
     <string name="savedmessage">Your drawing has been saved.</string>
     <string name="longpresssavemessage">Long press the save icon to load.</string>
     <string name="saves">Saves</string>
-    <string name="loadmessage">Your current drawing will be overwritten.\nAre you sure?</string>
-    <string name="savemessage">Saving this drawing will overwrite any drawing with the same name.</string>
+    <string name="loadmessage">Your current drawing will be overwritten.</string>
     <string name="savename">Savename</string>
     <string name="save">Save Drawing</string>
     <string name="load">Load Drawing</string>
@@ -18,4 +17,7 @@
     <string name="deletemessage">Are you sure you want to delete this drawing?</string>
     <string name="invalidsavename">Picture not saved.\nThe savename cannot be empty.</string>
     <string name="photoheight">Photo height</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="frontcamera">Taken with front facing camera?</string>
 </resources>

@@ -69,14 +69,14 @@ public class SavesFragment extends Fragment {
                 dialog.setTitle(R.string.load);
                 dialog.setMessage(R.string.loadmessage);
 
-                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mListener.onCloseSavesFragment();
                         mListener.onSaveLoad(adapter.getItem(i).getId());
                     }
                 });
-                dialog.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

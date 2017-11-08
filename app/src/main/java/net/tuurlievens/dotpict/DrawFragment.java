@@ -17,7 +17,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -170,7 +169,6 @@ public class DrawFragment extends Fragment {
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
                 dialog.setTitle(R.string.save);
-                dialog.setMessage(R.string.savemessage);
 
                 final EditText input = new EditText(getContext());
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -181,7 +179,7 @@ public class DrawFragment extends Fragment {
                 input.setLayoutParams(params);
                 dialog.setView(input);
 
-                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!TextUtils.isEmpty(input.getText())) {
@@ -190,6 +188,12 @@ public class DrawFragment extends Fragment {
                         } else {
                             Toast.makeText(getActivity(), R.string.invalidsavename, Toast.LENGTH_SHORT).show();
                         }
+                    }
+                });
+                dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                     }
                 });
                 dialog.show();
@@ -251,13 +255,13 @@ public class DrawFragment extends Fragment {
 
             // add checkbox
             final CheckBox checkbox = new CheckBox(getContext());
-            checkbox.setText("Taken with front facing camera?");
+            checkbox.setText(R.string.frontcamera);
             checkbox.setLayoutParams(params);
             ll.addView(checkbox);
 
             dialog.setView(ll);
 
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // get camera sensor orientation
@@ -290,6 +294,12 @@ public class DrawFragment extends Fragment {
                     int[] pixels = new int[scaledPhoto.getWidth()*scaledPhoto.getHeight()];
                     scaledPhoto.getPixels(pixels, 0, scaledPhoto.getWidth(), 0, 0, scaledPhoto.getWidth(), scaledPhoto.getHeight());
                     generate(scaledPhoto.getHeight(),scaledPhoto.getWidth(), pixels);
+                }
+            });
+            dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
                 }
             });
 
