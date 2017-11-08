@@ -14,7 +14,6 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 import net.tuurlievens.dotpict.saves.*;
 
 // TODO: fix fragments
-// TODO: dimensions dialog not dismissable on reset
 // TODO: better default canvas sizes + larger range
 
 public class MainActivity extends FragmentActivity implements DimensionDialogFragment.DimensionDialogListener, DrawFragment.DrawFragmentListener, SavesFragment.SavesFragmentListener, ColorPickerDialogListener {
@@ -56,7 +55,6 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
     private void askForDimensions() {
         // ask for number of rows/cols
         DialogFragment dialog = new DimensionDialogFragment();
-        dialog.setCancelable(false);
         dialog.show(getSupportFragmentManager(), "dialog");
     }
 
