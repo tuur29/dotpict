@@ -108,7 +108,7 @@ public class DrawFragment extends Fragment {
             body.post(new Runnable() {
                 @Override
                 public void run() {
-                    generate(20, 20);
+                    generate(25, 25);
                 }
             });
         }

@@ -14,7 +14,6 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 import net.tuurlievens.dotpict.saves.*;
 
 // TODO: fix fragments
-// TODO: better default canvas sizes + larger range
 
 public class MainActivity extends FragmentActivity implements DimensionDialogFragment.DimensionDialogListener, DrawFragment.DrawFragmentListener, SavesFragment.SavesFragmentListener, ColorPickerDialogListener {
 
