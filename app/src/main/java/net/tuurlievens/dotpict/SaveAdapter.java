@@ -1,8 +1,8 @@
 package net.tuurlievens.dotpict;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,17 +11,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.tuurlievens.dotpict.saves.*;
+
 import java.util.ArrayList;
 
-class SaveAdapter extends ArrayAdapter<String> {
+class SaveAdapter extends ArrayAdapter<Save> {
 
-    private ArrayList<String> data_text;
     final private Context context;
 
-    SaveAdapter(Context context, ArrayList<String> text) {
-        super(context, R.layout.saveitem, text);
+    SaveAdapter(Context context) {
+        super(context, R.layout.saveitem, new ArrayList<Save>());
         this.context = context;
-        data_text = text;
     }
 
     @Override
@@ -43,8 +43,7 @@ class SaveAdapter extends ArrayAdapter<String> {
         }
 
         // remove saved drawing
-        final String text = data_text.get(position);
-        holder.text.setText(text);
+        holder.text.setText(this.getItem(position).getName());
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,11 +55,15 @@ class SaveAdapter extends ArrayAdapter<String> {
                 dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        data_text.remove(position);
-                        SaveAdapter.this.notifyDataSetChanged();
-
-                        SharedPreferences sharedPref = context.getSharedPreferences("saves", Context.MODE_PRIVATE);
-                        sharedPref.edit().remove(text).apply();
+                        final Save save = getItem(position);
+                        remove(save);
+                        notifyDataSetChanged();
+                        final SavesDatabase database = Room.databaseBuilder(getContext(), SavesDatabase.class, "saves").build();
+                        new Thread(new Runnable() {
+                            public void run() {
+                                database.daoAccess().delete(save);
+                            }
+                        }).start();
                     }
                 });
                 dialog.setNegativeButton("Close", new DialogInterface.OnClickListener() {

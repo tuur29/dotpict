@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 
+import net.tuurlievens.dotpict.saves.Save;
+
 import static android.app.Activity.RESULT_OK;
 
 public class DrawFragment extends Fragment {
@@ -178,7 +180,8 @@ public class DrawFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!TextUtils.isEmpty(input.getText())) {
-                            mListener.onCanvasSaved(input.getText().toString(), canvas.toString());
+                            Save save = new Save(input.getText().toString(), canvas.toString());
+                            mListener.onCanvasSaved(save);
                         } else {
                             Toast.makeText(getActivity(), R.string.invalidsavename, Toast.LENGTH_SHORT).show();
                         }
@@ -345,7 +348,7 @@ public class DrawFragment extends Fragment {
 
     public interface DrawFragmentListener {
         void onCanvasResetted();
-        void onCanvasSaved(String key, String data);
+        void onCanvasSaved(Save save);
         void openSaves();
     }
 

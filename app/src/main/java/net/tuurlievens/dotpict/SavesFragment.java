@@ -1,25 +1,41 @@
 package net.tuurlievens.dotpict;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import net.tuurlievens.dotpict.saves.*;
+
+import java.util.List;
 
 public class SavesFragment extends Fragment {
 
     private SavesFragmentListener mListener;
-    private ArrayList<String> saves = new ArrayList<>();
     private SaveAdapter adapter;
+    private SavesDatabase database;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.database = Room.databaseBuilder(getContext(), SavesDatabase.class, "saves").build();
+        this.adapter = new SaveAdapter(getContext());
+
+        new Thread(new Runnable() {
+            public void run() {
+                List<Save> saves = database.daoAccess().fetchAllData();
+                for (Save save : saves)
+                    adapter.add(save);
+            }
+        }).start();
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -41,13 +57,8 @@ public class SavesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_saves, container, false);
 
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("saves", Context.MODE_PRIVATE);
-        saves = new ArrayList<>(sharedPref.getAll().keySet());
-        adapter = new SaveAdapter(getContext(), saves);
-        adapter.notifyDataSetChanged();
-
         ListView saveslist = view.findViewById(R.id.saveslist);
-        saveslist.setAdapter(adapter);
+        saveslist.setAdapter(this.adapter);
 
         // load save
         saveslist.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -62,7 +73,7 @@ public class SavesFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mListener.onCloseSavesFragment();
-                        mListener.onSaveLoad(saves.get(i));
+                        mListener.onSaveLoad(adapter.getItem(i).getId());
                     }
                 });
                 dialog.setNegativeButton("Close", new DialogInterface.OnClickListener() {
@@ -80,15 +91,17 @@ public class SavesFragment extends Fragment {
     }
 
     // add new save names to list
-    public void addSave(String key) {
-        if (!saves.contains(key)) {
-            saves.add(key);
-            adapter.notifyDataSetChanged();
-        }
+    public void addSave(final Save save) {
+        new Thread(new Runnable() {
+            public void run() {
+                database.daoAccess().insert(save);
+            }
+        }).start();
+        adapter.add(save);
     }
 
     public interface SavesFragmentListener {
-        void onSaveLoad(String key);
+        void onSaveLoad(int id);
         void onCloseSavesFragment();
     }
 }
