@@ -43,6 +43,7 @@ public class DrawFragment extends Fragment {
     private boolean pickingColor = false;
     private ViewGroup body;
     private ViewGroup buttonlist;
+    private ViewGroup scrolllist;
     private ProgressBar progressbar;
     private CanvasView canvas = null;
     private DrawFragmentListener mListener;
@@ -80,6 +81,7 @@ public class DrawFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_draw, container, false);
         body = view.findViewById(R.id.body);
         buttonlist = view.findViewById(R.id.buttonlist);
+        scrolllist = view.findViewById(R.id.scrolllist);
         progressbar = view.findViewById(R.id.progress);
         return view;
     }
@@ -117,7 +119,7 @@ public class DrawFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ColorPickerDialog.newBuilder().setAllowPresets(true).setColor(canvas.getColor()).show(getActivity());
-                buttonlist.setVisibility(View.INVISIBLE);
+                scrolllist.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -125,10 +127,10 @@ public class DrawFragment extends Fragment {
         view.findViewById(R.id.colorButton).setOnLongClickListener(new FloatingActionButton.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (buttonlist.getVisibility() == View.VISIBLE)
-                    buttonlist.setVisibility(View.INVISIBLE);
+                if (scrolllist.getVisibility() == View.VISIBLE)
+                    scrolllist.setVisibility(View.INVISIBLE);
                 else
-                    buttonlist.setVisibility(View.VISIBLE);
+                    scrolllist.setVisibility(View.VISIBLE);
                 return true;
             }
         });
@@ -147,7 +149,7 @@ public class DrawFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 canvas.fill();
-                buttonlist.setVisibility(View.INVISIBLE);
+                scrolllist.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -155,7 +157,7 @@ public class DrawFragment extends Fragment {
         view.findViewById(R.id.clearButton).setOnClickListener(new FloatingActionButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                buttonlist.setVisibility(View.INVISIBLE);
+                scrolllist.setVisibility(View.INVISIBLE);
                 mListener.onCanvasResetted();
             }
         });
@@ -164,7 +166,7 @@ public class DrawFragment extends Fragment {
         view.findViewById(R.id.saveButton).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                buttonlist.setVisibility(View.INVISIBLE);
+                scrolllist.setVisibility(View.INVISIBLE);
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
                 dialog.setTitle(R.string.save);
@@ -198,7 +200,7 @@ public class DrawFragment extends Fragment {
             @Override
             public boolean onLongClick(View view) {
                 mListener.openSaves();
-                buttonlist.setVisibility(View.INVISIBLE);
+                scrolllist.setVisibility(View.INVISIBLE);
                 return true;
             }
         });
@@ -210,7 +212,7 @@ public class DrawFragment extends Fragment {
                 if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, 2);
                 }
-                buttonlist.setVisibility(View.INVISIBLE);
+                scrolllist.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -218,7 +220,7 @@ public class DrawFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 rotate();
-                buttonlist.setVisibility(View.INVISIBLE);
+                scrolllist.setVisibility(View.INVISIBLE);
             }
         });
 

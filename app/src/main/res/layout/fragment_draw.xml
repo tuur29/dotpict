@@ -11,8 +11,8 @@
     tools:layout_editor_absoluteX="0"
     tools:layout_editor_absoluteY="0">
 
-    <LinearLayout
-        android:id="@+id/buttonlist"
+    <ScrollView
+        android:id="@+id/scrolllist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -21,83 +21,89 @@
         android:layout_marginEnd="20dp"
         android:gravity="bottom"
         android:translationZ="10dp"
-        android:orientation="vertical"
         android:visibility="invisible">
 
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/pickerButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/buttonlist"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_colorize_white_24dp" />
+            android:orientation="vertical">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fillButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_format_color_fill_white_24dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/pickerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_colorize_white_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/rotateButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            android:clickable="true"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_rotate_right_white_24dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fillButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_format_color_fill_white_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/cameraButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_photo_camera_white_24dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/rotateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_rotate_right_white_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/clearButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_clear_white_24dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/cameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_photo_camera_white_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/saveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="10dp"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_save_white_24dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/clearButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_clear_white_24dp" />
 
-    </LinearLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/saveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_save_white_24dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/colorButton"

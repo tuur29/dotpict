@@ -14,7 +14,6 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 import net.tuurlievens.dotpict.saves.*;
 
 // TODO: fix fragments
-// TODO: top most second fab buttons get chopped of in landscape?
 // TODO: dimensions dialog not dismissable on reset
 // TODO: better default canvas sizes + larger range
 
