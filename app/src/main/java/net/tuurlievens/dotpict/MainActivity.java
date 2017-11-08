@@ -14,7 +14,9 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 import net.tuurlievens.dotpict.saves.*;
 
 // TODO: fix fragments
-// TODO: crashes on picture convert to high row count
+// TODO: top most second fab buttons get chopped of in landscape?
+// TODO: dimensions dialog not dismissable on reset
+// TODO: better default canvas sizes + larger range
 
 public class MainActivity extends FragmentActivity implements DimensionDialogFragment.DimensionDialogListener, DrawFragment.DrawFragmentListener, SavesFragment.SavesFragmentListener, ColorPickerDialogListener {
 

@@ -17,16 +17,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
@@ -211,6 +214,14 @@ public class DrawFragment extends Fragment {
             }
         });
 
+        view.findViewById(R.id.rotateButton).setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rotate();
+                buttonlist.setVisibility(View.INVISIBLE);
+            }
+        });
+
     }
 
     @Override
@@ -223,46 +234,60 @@ public class DrawFragment extends Fragment {
             dialog.setTitle(R.string.photoheight);
             dialog.setMessage(R.string.row);
 
+            final LinearLayout ll = new LinearLayout(getContext());
+            ll.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMarginStart(100);
+            params.setMarginEnd(100);
+            ll.setLayoutParams(params);
+
             // add slider
             final SeekBar input = new SeekBar(getContext());
             input.setProgress(20);
             input.setMax(37);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMarginStart(100);
-            params.setMarginEnd(100);
-            input.setLayoutParams(params);
-            dialog.setView(input);
+            ll.addView(input);
+
+            // add checkbox
+            final CheckBox checkbox = new CheckBox(getContext());
+            checkbox.setText("Taken with front facing camera?");
+            checkbox.setLayoutParams(params);
+            ll.addView(checkbox);
+
+            dialog.setView(ll);
 
             dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // get camera sensor orientation
-                    CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
                     int orientation = 0;
+                    CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
                     try {
-                        String cameraId = manager.getCameraIdList()[0];
+                        int length = manager.getCameraIdList().length;
+                        String cameraId = manager.getCameraIdList()[0 + (checkbox.isChecked() && length > 1 ? 1 : 0)];
                         CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
                         orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
                     } catch (Exception e){}
 
                     // get picture
-                    Bundle extras = data.getExtras();
-                    Bitmap photo = (Bitmap) extras.get("data");
-
-                    // resize photo
-                    int rows = input.getProgress() + 3;
-                    int columns = rows * (photo.getWidth() / photo.getHeight());
-                    photo = Bitmap.createScaledBitmap(photo, rows, columns, false);
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
 
                     // rotate photo based on picture orientation
                     Matrix matrix = new Matrix();
                     matrix.postRotate(orientation);
                     Bitmap rotatedPhoto = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 
+                    // resize photo
+                    int rows = input.getProgress() + 3;
+                    double aspectratio = ( ((double) rotatedPhoto.getHeight()) / rotatedPhoto.getWidth()) > 1 ?
+                            ( ((double) rotatedPhoto.getHeight()) / rotatedPhoto.getWidth()) :
+                            ( ((double) rotatedPhoto.getWidth()) / rotatedPhoto.getHeight());
+                    int columns = (int) (rows * aspectratio);
+                    Bitmap scaledPhoto = Bitmap.createScaledBitmap(rotatedPhoto, rows, columns, false);
+
                     // convert to color array
-                    int[] pixels = new int[rotatedPhoto.getWidth()*rotatedPhoto.getHeight()];
-                    rotatedPhoto.getPixels(pixels, 0, rotatedPhoto.getWidth(), 0, 0, rotatedPhoto.getHeight(), rotatedPhoto.getWidth());
-                    generate(rotatedPhoto.getHeight(),rotatedPhoto.getWidth(), pixels);
+                    int[] pixels = new int[scaledPhoto.getWidth()*scaledPhoto.getHeight()];
+                    scaledPhoto.getPixels(pixels, 0, scaledPhoto.getWidth(), 0, 0, scaledPhoto.getWidth(), scaledPhoto.getHeight());
+                    generate(scaledPhoto.getHeight(),scaledPhoto.getWidth(), pixels);
                 }
             });
 
@@ -271,6 +296,25 @@ public class DrawFragment extends Fragment {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void rotate() {
+        progressbar.setVisibility(View.VISIBLE);
+
+        // rotate photo 90 degrees to the right
+        new Thread(new Runnable() {
+            public void run() {
+                final TextView[][] rotated = canvas.getRotated();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        canvas.load(rotated);
+                        progressbar.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }).start();
+
     }
 
     public void generate(final int rows, final int columns) {

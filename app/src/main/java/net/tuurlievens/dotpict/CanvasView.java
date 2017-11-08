@@ -139,4 +139,36 @@ public class CanvasView extends LinearLayout {
 
         return null;
     }
+
+    public TextView[][] getRotated() {
+        final int m = pixels.length;
+        final int n = pixels[0].length;
+        final TextView[][] newpixels = new TextView[n][m];
+
+        for (int r = 0; r < m; r++) {
+            for (int c = 0; c < n; c++) {
+                TextView pixel = new TextView(getContext());
+                pixel.setHeight(pixelRadius);
+                pixel.setWidth(pixelRadius);
+                pixel.setBackgroundColor(((ColorDrawable) pixels[r][c].getBackground()).getColor());
+                newpixels[c][m-1-r] = pixel;
+            }
+        }
+        return newpixels;
+    }
+
+    public void load(TextView[][] newpixels) {
+        removeAllViews();
+
+        for (TextView[] pixelrow: newpixels) {
+            LinearLayout row = new LinearLayout(getContext());
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            for (TextView pixel: pixelrow) {
+                row.addView(pixel);
+            }
+            addView(row);
+        }
+
+        pixels = newpixels;
+    }
 }
