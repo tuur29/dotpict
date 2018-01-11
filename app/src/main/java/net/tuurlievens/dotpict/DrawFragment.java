@@ -1,5 +1,6 @@
 package net.tuurlievens.dotpict;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,9 +15,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +38,8 @@ import android.widget.Toast;
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 
 import net.tuurlievens.dotpict.saves.Save;
+
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -228,6 +234,38 @@ public class DrawFragment extends Fragment {
             }
         });
 
+        view.findViewById(R.id.brushButton).setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scrolllist.setVisibility(View.INVISIBLE);
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setTitle(R.string.brushsize);
+
+                final SeekBar input = new SeekBar(getContext());
+                input.setMax(17);
+                input.setProgress(canvas.brushSize-1);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMarginStart(100);
+                input.setLayoutParams(params);
+                dialog.setView(input);
+
+                dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        canvas.brushSize = input.getProgress()+1;
+                    }
+                });
+                dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+            }
+        });
+
     }
 
     @Override
@@ -338,8 +376,10 @@ public class DrawFragment extends Fragment {
         progressbar.setVisibility(View.VISIBLE);
 
         // remove old canvas
-        if (body != null && canvas != null)
+        if (body != null && canvas != null) {
             body.removeView(canvas);
+            setColor(ColorUtils.setAlphaComponent(ContextCompat.getColor(getContext(), R.color.colorAccent), 255));
+        }
 
         // make canvas
         final CanvasView canvas = new CanvasView(getActivity());
@@ -352,6 +392,7 @@ public class DrawFragment extends Fragment {
                 canvas.generate(body,rows,columns,pixelColors);
 
                 getActivity().runOnUiThread(new Runnable() {
+                    @SuppressLint("ClickableViewAccessibility")
                     @Override
                     public void run() {
                         progressbar.setVisibility(View.INVISIBLE);
@@ -371,9 +412,13 @@ public class DrawFragment extends Fragment {
                             @Override
                             public boolean onTouch(View view, MotionEvent motionEvent) {
                                 if (pickingColor) {
-                                    setColor( ((ColorDrawable) canvas.findPixel(motionEvent).getBackground()).getColor() );
+                                    int tempBrushSize = canvas.brushSize;
+                                    canvas.brushSize = 1;
+                                    List<View> pixels = canvas.findPixels(motionEvent);
+                                    setColor( ((ColorDrawable) pixels.get(0).getBackground()).getColor() );
+                                    canvas.brushSize = tempBrushSize;
                                     pickingColor = false;
-                                    return false;
+                                    return true;
                                 }
                                 return false;
                             }

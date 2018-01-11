@@ -6,11 +6,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CanvasView extends LinearLayout {
 
@@ -18,6 +22,7 @@ public class CanvasView extends LinearLayout {
     private int pixelRadius = 0;
 
     public int color = ColorUtils.setAlphaComponent(ContextCompat.getColor(getContext(), R.color.colorAccent), 255);
+    public int brushSize = 1;
 
     public CanvasView(Context context) {
         super(context);
@@ -26,7 +31,6 @@ public class CanvasView extends LinearLayout {
         super(context, attrs);
     }
     public CanvasView(Context context, AttributeSet attrs, int defStyle) { super(context, attrs, defStyle); }
-
 
     public int getColor() {
         return color;
@@ -79,8 +83,8 @@ public class CanvasView extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        View pixel = findPixel(event);
-        if (pixel != null)
+        List<View> pixels = findPixels(event);
+        for (View pixel: pixels)
             pixel.setBackgroundColor(color);
         return true;
 
@@ -116,19 +120,29 @@ public class CanvasView extends LinearLayout {
         return list.substring(0, list.length() - 1);
     }
 
-    public View findPixel(MotionEvent motionEvent) {
-        // find pixel under current coordinates
+    public List<View> findPixels(MotionEvent motionEvent) {
+        // find pixels under current coordinates
         int x = (int) motionEvent.getRawX();
         int y = (int) motionEvent.getRawY();
+
+        List<View> list = new ArrayList<>();
 
         rowloop: for (TextView[] row : pixels) {
             for (TextView pixel : row) {
                 int params[] = new int[2];
                 pixel.getLocationOnScreen(params);
 
-                if ( y >= params[1] - pixelRadius && y <= params[1] + pixelRadius) {
-                    if ( x >= params[0] - pixelRadius && x <= params[0] + pixelRadius) {
-                        return pixel;
+                if (brushSize > 1) {
+                    int rad = (int) (pixelRadius*brushSize*1.05) /2;
+                    if (Math.sqrt(Math.pow((x - params[0]), 2) + Math.pow((y - params[1]), 2)) <= rad)
+                        list.add(pixel);
+                    if (y > params[1]*rad )
+                        return list;
+
+                } else if ( y >= params[1] - pixelRadius*brushSize && y <= params[1] + pixelRadius*brushSize) {
+                    if ( x >= params[0] - pixelRadius*brushSize && x <= params[0] + pixelRadius*brushSize) {
+                        list.add(pixel);
+                        return list;
                     }
                 } else {
                     continue rowloop;
@@ -136,7 +150,7 @@ public class CanvasView extends LinearLayout {
             }
         }
 
-        return null;
+        return list;
     }
 
     public TextView[][] getRotated() {
