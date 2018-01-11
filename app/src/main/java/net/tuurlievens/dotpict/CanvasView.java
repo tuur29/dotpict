@@ -126,6 +126,7 @@ public class CanvasView extends LinearLayout {
         int y = (int) motionEvent.getRawY();
 
         List<View> list = new ArrayList<>();
+        int rad = (int) (pixelRadius*brushSize*1.05) /2;
 
         rowloop: for (TextView[] row : pixels) {
             for (TextView pixel : row) {
@@ -133,7 +134,6 @@ public class CanvasView extends LinearLayout {
                 pixel.getLocationOnScreen(params);
 
                 if (brushSize > 1) {
-                    int rad = (int) (pixelRadius*brushSize*1.05) /2;
                     if (Math.sqrt(Math.pow((x - params[0]), 2) + Math.pow((y - params[1]), 2)) <= rad)
                         list.add(pixel);
                     if (y > params[1]*rad )
