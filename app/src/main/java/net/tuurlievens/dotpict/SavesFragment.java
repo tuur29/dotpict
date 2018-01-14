@@ -100,6 +100,12 @@ public class SavesFragment extends Fragment {
         adapter.add(save);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainApplication.getRefWatcher(getActivity()).watch(this);
+    }
+
     public interface SavesFragmentListener {
         void onSaveLoad(int id);
         void onCloseSavesFragment();

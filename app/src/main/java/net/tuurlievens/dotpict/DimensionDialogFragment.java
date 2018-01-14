@@ -50,6 +50,12 @@ public class DimensionDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainApplication.getRefWatcher(getActivity()).watch(this);
+    }
+
     public interface DimensionDialogListener {
         void onDialogPositiveClick(int rows, int cols);
     }

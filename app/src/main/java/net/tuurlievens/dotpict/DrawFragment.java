@@ -447,6 +447,12 @@ public class DrawFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainApplication.getRefWatcher(getActivity()).watch(this);
+    }
+
     public interface DrawFragmentListener {
         void onCanvasResetted();
         void onCanvasSaved(Save save);
