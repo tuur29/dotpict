@@ -110,6 +110,7 @@ public class DrawFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (savedInstanceState != null) {
+
             setColor(savedInstanceState.getInt("color"));
 
             if (savedInstanceState.get("pixels") != null) {
@@ -125,6 +126,10 @@ public class DrawFragment extends Fragment {
                 });
             }
         } else {
+
+            // inform people of secondary tools
+            Toast.makeText(getActivity(), R.string.toolsmessage, Toast.LENGTH_SHORT).show();
+
             body.post(new Runnable() {
                 @Override
                 public void run() {
@@ -415,8 +420,6 @@ public class DrawFragment extends Fragment {
                         progressbar.setVisibility(View.INVISIBLE);
                         body.addView(canvas, 0);
 
-                        // inform people of secondary tools
-                        Toast.makeText(getActivity(), R.string.toolsmessage, Toast.LENGTH_SHORT).show();
 
                         // center canvas
                         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) canvas.getLayoutParams();
