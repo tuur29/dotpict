@@ -103,6 +103,7 @@ public class SavesFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        database.close();
         MainApplication.getRefWatcher(getActivity()).watch(this);
     }
 
