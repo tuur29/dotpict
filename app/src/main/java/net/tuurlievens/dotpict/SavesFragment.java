@@ -100,6 +100,12 @@ public class SavesFragment extends Fragment {
         adapter.add(save);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        database.close();
+    }
+
     public interface SavesFragmentListener {
         void onSaveLoad(int id);
         void onCloseSavesFragment();

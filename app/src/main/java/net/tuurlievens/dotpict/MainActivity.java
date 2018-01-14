@@ -44,6 +44,12 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        database.close();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
     }
