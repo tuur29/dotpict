@@ -1,6 +1,5 @@
 package net.tuurlievens.dotpict;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,7 +19,6 @@ import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,6 +50,7 @@ public class DrawFragment extends Fragment {
     private ProgressBar progressbar;
     private CanvasView canvas = null;
     private DrawFragmentListener mListener;
+    private Bundle tempSavedInstanceState = null;
 
     public DrawFragment() {}
 
@@ -73,11 +72,20 @@ public class DrawFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("color", canvas.getColor());
+
         if (canvas != null) {
+            savedInstanceState.putInt("color", canvas.getColor());
             savedInstanceState.putInt("rows", canvas.getRows());
             savedInstanceState.putInt("columns", canvas.getColumns());
             savedInstanceState.putIntArray("pixels", canvas.toArray());
+
+        } else if (tempSavedInstanceState != null) {
+            // use old instancestate if turning display before canvas is loaded
+
+            savedInstanceState.putInt("color", tempSavedInstanceState.getInt("color"));
+            savedInstanceState.putInt("rows", tempSavedInstanceState.getInt("rows"));
+            savedInstanceState.putInt("columns", tempSavedInstanceState.getInt("columns"));
+            savedInstanceState.putIntArray("pixels", tempSavedInstanceState.getIntArray("pixels"));
         }
     }
 
@@ -89,6 +97,12 @@ public class DrawFragment extends Fragment {
         scrolllist = view.findViewById(R.id.scrolllist);
         progressbar = view.findViewById(R.id.progress);
         return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        tempSavedInstanceState = savedInstanceState;
     }
 
     @Override
@@ -381,18 +395,21 @@ public class DrawFragment extends Fragment {
             setColor(ColorUtils.setAlphaComponent(ContextCompat.getColor(getContext(), R.color.colorAccent), 255));
         }
 
+        if (getActivity() == null) return;
+
         // make canvas
         final CanvasView canvas = new CanvasView(getActivity());
         canvas.setOrientation(LinearLayout.VERTICAL);
         canvas.setBackgroundColor(Color.WHITE);
         canvas.setElevation(8);
 
+
         new Thread(new Runnable() {
             public void run() {
                 canvas.generate(body,rows,columns,pixelColors);
 
+                if (getActivity() == null) return;
                 getActivity().runOnUiThread(new Runnable() {
-                    @SuppressLint("ClickableViewAccessibility")
                     @Override
                     public void run() {
                         progressbar.setVisibility(View.INVISIBLE);
@@ -435,6 +452,7 @@ public class DrawFragment extends Fragment {
 
     private void registerCanvas(final CanvasView canvas) {
         this.canvas = canvas;
+        tempSavedInstanceState = null;
     }
 
     public void setColor(int color) {
