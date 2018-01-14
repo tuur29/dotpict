@@ -54,6 +54,9 @@ public class MainActivity extends FragmentActivity implements DimensionDialogFra
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    public CanvasView getCanvas() {
+        return drawfragment.getCanvas();
+    }
 
     // dimensions dialog
 

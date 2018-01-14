@@ -407,7 +407,7 @@ public class DrawFragment extends Fragment {
         canvas.setOrientation(LinearLayout.VERTICAL);
         canvas.setBackgroundColor(Color.WHITE);
         canvas.setElevation(8);
-
+        canvas.setTag(R.id.CANVAS_TAG, true);
 
         new Thread(new Runnable() {
             public void run() {
@@ -451,6 +451,10 @@ public class DrawFragment extends Fragment {
             }
         }).start();
 
+    }
+
+    public CanvasView getCanvas() {
+        return canvas;
     }
 
     private void registerCanvas(final CanvasView canvas) {

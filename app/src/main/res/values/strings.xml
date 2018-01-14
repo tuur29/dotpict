@@ -1,4 +1,5 @@
 <resources>
+    <item type="id" name="CANVAS_TAG"/>
     <string name="app_name">Tuur\'s Dotpict</string>
     <string name="question">How many button per row/column do you want?</string>
     <string name="row">Rows</string>
