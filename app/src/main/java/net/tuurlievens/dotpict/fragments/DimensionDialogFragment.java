@@ -1,4 +1,4 @@
-package net.tuurlievens.dotpict;
+package net.tuurlievens.dotpict.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.widget.SeekBar;
+
+import net.tuurlievens.dotpict.R;
 
 public class DimensionDialogFragment extends DialogFragment {
 

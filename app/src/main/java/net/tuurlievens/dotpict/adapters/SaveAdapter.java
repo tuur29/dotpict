@@ -1,4 +1,4 @@
-package net.tuurlievens.dotpict;
+package net.tuurlievens.dotpict.adapters;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
@@ -11,15 +11,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.tuurlievens.dotpict.saves.*;
+import net.tuurlievens.dotpict.R;
+import net.tuurlievens.dotpict.models.Save;
+import net.tuurlievens.dotpict.persistency.*;
 
 import java.util.ArrayList;
 
-class SaveAdapter extends ArrayAdapter<Save> {
+public class SaveAdapter extends ArrayAdapter<Save> {
 
     final private Context context;
 
-    SaveAdapter(Context context) {
+    public SaveAdapter(Context context) {
         super(context, R.layout.saveitem, new ArrayList<Save>());
         this.context = context;
     }

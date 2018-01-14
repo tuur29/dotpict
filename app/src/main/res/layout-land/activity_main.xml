@@ -8,14 +8,14 @@
 
     <fragment android:id="@+id/drawfragment"
         android:layout_height="fill_parent"
-        android:name="net.tuurlievens.dotpict.DrawFragment"
+        android:name="net.tuurlievens.dotpict.fragments.DrawFragment"
         android:layout_width="fill_parent"
         android:layout_marginEnd="200dp"
         tools:layout="@layout/fragment_draw" />
 
     <fragment
         android:id="@+id/savesfragment"
-        android:name="net.tuurlievens.dotpict.SavesFragment"
+        android:name="net.tuurlievens.dotpict.fragments.SavesFragment"
         android:layout_width="200dp"
         android:layout_height="fill_parent"
         android:layout_alignParentEnd="true"

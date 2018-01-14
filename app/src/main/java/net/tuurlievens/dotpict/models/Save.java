@@ -1,4 +1,4 @@
-package net.tuurlievens.dotpict.saves;
+package net.tuurlievens.dotpict.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;

@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <fragment android:id="@+id/drawfragment"
-        android:name="net.tuurlievens.dotpict.DrawFragment"
+        android:name="net.tuurlievens.dotpict.fragments.DrawFragment"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
         tools:layout="@layout/fragment_draw" />
@@ -20,7 +20,7 @@
 
         <fragment
             android:id="@+id/savesfragment"
-            android:name="net.tuurlievens.dotpict.SavesFragment"
+            android:name="net.tuurlievens.dotpict.fragments.SavesFragment"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_margin="10dp"

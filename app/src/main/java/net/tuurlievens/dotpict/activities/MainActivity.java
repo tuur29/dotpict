@@ -1,4 +1,4 @@
-package net.tuurlievens.dotpict;
+package net.tuurlievens.dotpict.activities;
 
 import android.arch.persistence.room.Room;
 import android.content.Intent;
@@ -11,7 +11,13 @@ import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 
-import net.tuurlievens.dotpict.saves.*;
+import net.tuurlievens.dotpict.views.CanvasView;
+import net.tuurlievens.dotpict.fragments.DimensionDialogFragment;
+import net.tuurlievens.dotpict.fragments.DrawFragment;
+import net.tuurlievens.dotpict.R;
+import net.tuurlievens.dotpict.fragments.SavesFragment;
+import net.tuurlievens.dotpict.models.Save;
+import net.tuurlievens.dotpict.persistency.*;
 
 // TODO: fix fragments
 

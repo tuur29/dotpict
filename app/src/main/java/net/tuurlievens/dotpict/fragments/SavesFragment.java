@@ -1,4 +1,4 @@
-package net.tuurlievens.dotpict;
+package net.tuurlievens.dotpict.fragments;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import net.tuurlievens.dotpict.saves.*;
+import net.tuurlievens.dotpict.R;
+import net.tuurlievens.dotpict.adapters.SaveAdapter;
+import net.tuurlievens.dotpict.models.Save;
+import net.tuurlievens.dotpict.persistency.*;
 
 import java.util.List;
 

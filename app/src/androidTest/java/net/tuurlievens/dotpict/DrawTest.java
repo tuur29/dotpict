@@ -10,6 +10,9 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
+import net.tuurlievens.dotpict.activities.MainActivity;
+import net.tuurlievens.dotpict.views.CanvasView;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

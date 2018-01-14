@@ -1,4 +1,4 @@
-package net.tuurlievens.dotpict;
+package net.tuurlievens.dotpict.fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,7 +35,9 @@ import android.widget.Toast;
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 
-import net.tuurlievens.dotpict.saves.Save;
+import net.tuurlievens.dotpict.views.CanvasView;
+import net.tuurlievens.dotpict.R;
+import net.tuurlievens.dotpict.models.Save;
 
 import java.util.List;
 
